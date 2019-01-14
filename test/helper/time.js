@@ -1,15 +1,5 @@
-//const { ethGetBlock } = require('web3');
-//const pify = require('pify');
-const { ganache_evm_mine,  ganache_evm_increaseTime } = require('./ganacheRPC');
 
-/*
-function advanceBlock () {
-  return pify(web3.currentProvider.send)({
-    jsonrpc: '2.0',
-    method: 'evm_mine',
-  });
-}
-*/
+const { ganache_evm_mine,  ganache_evm_increaseTime } = require('./ganacheRPC');
 
 function advanceBlock() {
   ganache_evm_mine()
@@ -17,29 +7,15 @@ function advanceBlock() {
 
 // Returns the time of the last mined block in seconds
 async function latest () {
-  /*
-  const block = await ethGetBlock('latest');
-  return block.timestamp;
-  */
   var latestBlock = await web3.eth.getBlockNumber();
-  var timestamp = web3.eth.getBlock(blockNumber).timestamp;
-
-  return timestamp;
+  var blockInfo = await web3.eth.getBlock(latestBlock);
+  return blockInfo.timestamp;
 }
 
 // Increases ganache time by the passed duration in seconds
 async function increase (duration) {
   if (duration < 0) throw Error(`Cannot increase time by a negative amount (${duration})`);
-
   await ganache_evm_increaseTime(duration);
-  /*
-  await pify(web3.currentProvider.send)({
-    jsonrpc: '2.0',
-    method: 'evm_increaseTime',
-    params: [duration],
-  });
-  */
-
   await advanceBlock();
 }
 
@@ -52,7 +28,6 @@ async function increase (duration) {
  */
 async function increaseTo (target) {
   const now = (await latest());
-
   if (target < now) throw Error(`Cannot increase current time (${now}) to a moment in the past (${target})`);
   const diff = target - now;
   return increase(diff);
