@@ -1,7 +1,6 @@
 {
-  "name": "mini-proj",
+  "name": "sign-the-doc",
   "version": "1.0.0",
-  "description": "",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
@@ -11,5 +10,17 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kenjirai/mini_proj.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kenjirai/mini_proj/issues"
+  },
+  "homepage": "https://github.com/kenjirai/mini_proj#readme",
+  "description": "",
+  "dependencies": {
+    "pify": "^4.0.1"
+  }
 }

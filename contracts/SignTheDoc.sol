@@ -43,7 +43,6 @@ contract SignTheDoc {
 
 
   function createDocToSign(
-    address creatorAddress,
     uint256 expiryDate,
     bytes memory signature,
     address[] memory authorisedSignerList,
@@ -56,7 +55,6 @@ contract SignTheDoc {
   {
     require(verifySignature(docHash, r, s, v));
     recordInitialDoc(
-      creatorAddress,
       expiryDate,
       signature,
       authorisedSignerList,
@@ -65,7 +63,6 @@ contract SignTheDoc {
   }
 
   function recordInitialDoc(
-    address creatorAddress,
     uint256 expiryDate,
     bytes memory signature,
     address[] memory authorisedSignerList,
@@ -75,7 +72,7 @@ contract SignTheDoc {
   {
     Creator storage creator = docData[docHash];
 
-    creator.creatorAddress = creatorAddress;
+    creator.creatorAddress = msg.sender;
     creator.creationDate = block.timestamp;
     creator.expiryDate = expiryDate;
     creator.docHash = docHash;
