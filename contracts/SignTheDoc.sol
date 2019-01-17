@@ -6,8 +6,11 @@ contract SignTheDoc {
         address creatorAddress;
         uint256 creationDate;
         uint256 expiryDate;
-        bytes32 docHash; bytes signature; address[] authorisedSignerList;
-        address[] whoSigned; mapping(address => bool) authorisedToSign;
+        bytes32 docHash; 
+        bytes signature; 
+        address[] authorisedSignerList;
+        address[] whoSigned; 
+        mapping(address => bool) authorisedToSign;
         mapping(address => Signer) signerInfo;
     }
 
@@ -24,6 +27,7 @@ contract SignTheDoc {
     //Hash of the data is linked to Creator Struct
     mapping(bytes32 => Creator) docData;
 
+    //Probably unnecessary
     Signer[] signers;
 
 
@@ -40,7 +44,6 @@ contract SignTheDoc {
     require(signerDocHash == docData[signerDocHash].docHash);
     _;
   }
-
 
   function createDocToSign(
     uint256 expiryDate,
@@ -77,6 +80,7 @@ contract SignTheDoc {
     creator.expiryDate = expiryDate;
     creator.docHash = docHash;
     creator.signature = signature;
+    //possible bug
     creator.authorisedSignerList = authorisedSignerList;
 
     if(authorisedSignerList.length != 0) {

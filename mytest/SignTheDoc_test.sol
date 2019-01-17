@@ -116,6 +116,4 @@ function testCorrectBooleanEntryForAuthoriseToSign() public {
   Assert.equal(authFalse, false, "Must not authroise to sign and should return false");
 }
 
-
-
 }
