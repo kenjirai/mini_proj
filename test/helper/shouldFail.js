@@ -2,12 +2,8 @@ const { should } = require('./setup');
 
 async function shouldFailWithMessage (promise, message) {
   try {
-   // console.log('inside try');
     await promise;
   } catch (error) {
-    //console.log('inside catch');
-    //console.log(error);
-    //console.log('error message', error.message);
     if (message) {
       error.message.should.include(message, `Wrong failure type, expected '${message}'`);
     }
@@ -32,8 +28,13 @@ async function shouldFail (promise) {
   await shouldFailWithMessage(promise);
 }
 
+async function customFail(promise, msg) {
+  await shouldFailWithMessage(promise, msg);
+}
+
 shouldFail.reverting = reverting;
 shouldFail.throwing = throwing;
 shouldFail.outOfGas = outOfGas;
+shouldFail.customFail = customFail;
 
 module.exports = shouldFail;

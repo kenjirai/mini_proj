@@ -22,5 +22,8 @@
   "description": "",
   "dependencies": {
     "pify": "^4.0.1"
+  },
+  "devDependencies": {
+    "chai-bn": "^0.1.1"
   }
 }

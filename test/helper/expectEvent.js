@@ -1,7 +1,7 @@
 
 //check the event name
 // check the event value
-
+/*
 process.argv.forEach(function (val) {
 	console.log('inside', val)
   if(val == 'web3') {
@@ -29,7 +29,7 @@ function expectEvent(obj, eventName, eventValue, fromBlock, toBlock='latest') {
 	})
 }
 
-
+*/
 
 
 

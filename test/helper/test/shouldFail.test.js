@@ -4,13 +4,11 @@ const shouldFail = require('../shouldFail');
 
 const Failer = artifacts.require('Failer');
 
-async function assertFailure (promise) {
-  try {
-    await promise;
-  } catch (error) {
-    return;
-  }
-  should.fail();
+const { customThrow, assertFailure } = require('../misc');
+
+
+async function throwFailWithCustomMsg(msg) {
+  throw new Error(msg)
 }
 
 describe('shouldFail', function () {
@@ -87,6 +85,16 @@ describe('shouldFail', function () {
 
     it('rejects a throw', async function () {
       await assertFailure(shouldFail.outOfGas(this.failer.failWithThrow()));
+    });
+  });
+  
+  describe('outOfGas', function () {
+    it('throws an error with accurate error message', async function () {
+      await shouldFail.customFail(throwFailWithCustomMsg('bad fail'), 'bad fail');
+    });
+
+     it('rejects for incorrect throw message', async function () {
+      await assertFailure(shouldFail.customFail(throwFailWithCustomMsg('bad fail'), 'yabadabadooo'));
     });
   });
 });
