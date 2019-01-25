@@ -1,5 +1,7 @@
 pragma solidity ^0.5.0;
 
+import "./IndirectEventEmitter.sol";
+
 contract EventEmitter {
     event Argumentless();
     event ShortUint(uint8 value);
@@ -10,6 +12,7 @@ contract EventEmitter {
     event Boolean(bool value);
     event String(string value);
     event LongUintBooleanString(uint256 uintValue, bool booleanValue, string stringValue);
+    event Bytes(bytes value);
 
     constructor (uint8 uintValue, bool booleanValue, string memory stringValue) public {
         emit ShortUint(uintValue);
@@ -49,6 +52,10 @@ contract EventEmitter {
         emit String(value);
     }
 
+    function emitBytes(bytes memory value) public {
+        emit Bytes(value);
+    }
+
     function emitLongUintBooleanString(uint256 uintValue, bool booleanValue, string memory stringValue) public {
         emit LongUintBooleanString(uintValue, booleanValue, stringValue);
     }
@@ -61,13 +68,5 @@ contract EventEmitter {
     function emitStringAndEmitIndirectly(string memory value, IndirectEventEmitter emitter) public {
         emit String(value);
         emitter.emitStringIndirectly(value);
-    }
-}
-
-contract IndirectEventEmitter {
-    event IndirectString(string value);
-
-    function emitStringIndirectly(string memory value) public {
-        emit IndirectString(value);
     }
 }

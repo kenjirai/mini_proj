@@ -10,23 +10,23 @@ function testEventData(eventData, eventName, eventTestObj) {
 			let loggedValue;
 			
 			if (isBN(value)) {
-				suppliedValue = String(value);
+				suppliedValue = value;
 				loggedValue = eventData.returnValues[key];
 				suppliedValue.should.be.bignumber.equal(loggedValue);
-				return('BigNumber Test Passed');	
-			}
-
-			if (typeof value === 'number') {
+				return('BigNumber Test Passed');
+			} else if (isNumber(value)) {
+				throw new Error('BigNumber type is expected instead number type received');
+			} else if( isBoolean(value)) {
 				suppliedValue = String(value);
-				loggedValue = eventData.returnValues[key];
-			} else if( typeof value === 'boolean') {
+				loggedValue = String(eventData.returnValues[key]);
+			} else if(value === null) {
 				suppliedValue = String(value);
 				loggedValue = String(eventData.returnValues[key]);
 			} else {
 				suppliedValue = value;
 				loggedValue = eventData.returnValues[key];
 			}
-	 
+
 	       	suppliedValue.should.be.equal(loggedValue);
 		});
 	}
@@ -35,7 +35,6 @@ function testEventData(eventData, eventName, eventTestObj) {
 }
 
 async function eventExist(blockNumber, deployedContract, eventName, eventTestObj) {
-	console.log(typeof blockNumber);
 
 	if(!blockNumber || typeof blockNumber !== 'number') {
 		throw new Error('blockNumber is undefined/not number type. Provide the correct blockNumber')
@@ -54,6 +53,14 @@ async function eventExist(blockNumber, deployedContract, eventName, eventTestObj
 
 function isBN (object) {
   return BN.isBN(object) || object instanceof BN;
+}
+
+function isNumber(object) {
+	return typeof object === 'number';
+}
+
+function isBoolean(object) {
+	return typeof object === 'boolean';
 }
 
 module.exports = {

@@ -1,0 +1,455 @@
+const shouldFail = require('../shouldFail');
+const EventEmitter = artifacts.require('EventEmitter');
+const IndirectEventEmitter = artifacts.require('IndirectEventEmitter');
+const { BN, should } = require('../setup');
+const { eventExist } = require('../getEvents');
+const { assertFailure } = require('../misc');
+
+describe('expectEvent', function() {
+  //###########MAIN OPENING TAG==============>
+
+  beforeEach(async function() {
+    this.constructionValues = {
+      uint: 42,
+      boolean: true,
+      string: 'OpenZeppelin',
+    };
+
+    this.emitter = await EventEmitter.new(
+      this.constructionValues.uint,
+      this.constructionValues.boolean,
+      this.constructionValues.string
+    );
+  });
+
+
+  describe('initial eventExist Test', function() {
+      //----------------start tag initial eventExist Test------------------>>
+    beforeEach(async function() {
+      this.stringBlockNumber = '1';
+      this.nullBlockNumber = null
+      this.errorMsg = 'blockNumber is undefined/not number type. Provide the correct blockNumber';
+      this.wrongMsg = 'Out of gas';
+    });
+
+    it('throws an error if blockNumber type is String', async function() {
+      await shouldFail.customFail(eventExist(this.stringBlockNumber, this.emitter, 'ShortUint', {
+        value: this.constructionValues.uint
+      }), this.errorMsg);
+    });
+
+    it('throws an error if blockNumber type is null', async function() {
+      await shouldFail.customFail(eventExist(this.nullBlockNumber, this.emitter, 'ShortUint', {
+        value: 23
+      }), this.errorMsg);
+    });
+
+    it('it rejects for wrong type of Error Message', async function() {
+      await assertFailure(shouldFail.customFail(eventExist(this.nullBlockNumber, this.emitter, 'ShortUint', {
+        value: 23
+      }), this.wrongMsg));
+    });
+      //----------------end tag initial eventExist Test------------------>>
+  });
+
+  describe('eventExist on blockchain', function() {
+    //========EVENT EXIST ON BLOCKCHAIN STARTING TAG ========>>>
+
+    beforeEach(async function() {
+      this.errorMsg = 'BigNumber type is expected instead number type received';
+      this.blockNum = await web3.eth.getBlockNumber();
+    });
+
+    context('short uint value', function() {
+      //------start tag short uint value----->
+      it('accepts emitted events with correct BN', async function() {
+        await eventExist(this.blockNum, this.emitter, 'ShortUint', {
+          value: new BN(this.constructionValues.uint)
+        });
+      });
+
+      it('throws if correct Javascript number is passed', async function() {
+        await shouldFail(
+          eventExist(this.blockNum, this.emitter, 'ShortUint', {
+            value: this.constructionValues.uint
+          }));
+      //------end tag short uint value----->
+      });
+
+      it('throws if an incorrect value is passed', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'ShortUint', {
+          value: 23
+        }));
+      });
+    });
+
+    context('boolean value', function() {
+      //------start tag boolean value----->
+      it('accepts emitted events with correct value', async function() {
+        await eventExist(this.blockNum, this.emitter, 'Boolean', {
+          value: this.constructionValues.boolean
+        });
+      });
+
+      it('throws if an incorrect value is passed', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'Boolean', {
+          value: !this.constructionValues.boolean
+        }));
+      });
+      //------end tag boolean value----->
+    });
+
+    context('string value', function() {
+      //------start tag string value---->
+      it('accepts emitted events with correct string', async function() {
+        await eventExist(this.blockNum, this.emitter, 'String');
+      });
+
+      it('throws if an incorrect string is passed', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'String', {
+          value: 'ClosedZeppelin'
+        }));
+      });
+
+      it('throws if an unemitted event is requested', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'Unemitted Event'));
+      });
+      //------start tag string value----->
+    });
+  //========EVENT EXIST ON BLOCKCHAIN CLOSING TAG ========>>>
+  });
+
+  describe('event Argumentless', function() {
+      //------start tag event argumentless----->
+    describe('with no arguments', function() {
+      beforeEach(async function() {
+        await this.emitter.emitArgumentless();
+        this.blockNum = await web3.eth.getBlockNumber();
+      });
+
+      it('accepts emitted events', async function() {
+        await eventExist(this.blockNum, this.emitter, 'Argumentless');
+      });
+
+      it('throws if an unemitted event is requested', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent'));
+      });
+    });
+    //------end tag event argumentless----->
+  });
+
+  describe('with single argument', function() {
+    //========WITH SINGLE ARGUMENT OPENING TAG=========>>
+
+    context('short uint value', function() {
+      //------start tag short uint value----->
+      beforeEach(async function() {
+        this.value = 42;
+        await this.emitter.emitShortUint(this.value);
+        this.blockNum = await web3.eth.getBlockNumber();
+      });
+
+      it('accepts emitted events with correct BN', async function() {
+        await eventExist(this.blockNum, this.emitter, 'ShortUint', {
+          value: new BN(this.value)
+        });
+      });
+
+      it('throws if a correct value is passed but of type number', async function() {
+        const errorMsg = 'BigNumber type is expected instead number type received';
+        await shouldFail.customFail(
+          eventExist(this.blockNum, this.emitter, 'ShortUint', {
+            value: this.value
+          }), errorMsg);
+      });
+
+      it('throws if an emitted event with correct BN and incorrect name is requested', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'ShortUint', {
+          number: new BN(this.value)
+        }));
+      });
+
+      it('throws if an unemitted event is requested', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent', {
+          value: this.value
+        }));
+      });
+
+      it('throws if a correct JavaScript number is passed', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'ShortUint', {
+          value: 23
+        }));
+      });
+      //------start tag end uint value----->
+    });
+
+    context('short int value', function() {
+      //------start tag short int value----->
+      beforeEach(async function() {
+        this.value = -42;
+        await this.emitter.emitShortInt(this.value);
+        this.blockNum = await web3.eth.getBlockNumber();
+      });
+
+      it('accepts emitted events with correct BN', async function() {
+        await eventExist(this.blockNum, this.emitter, 'ShortInt', {
+          value: new BN(this.value)
+        });
+      });
+
+      it('throws if a correct value is passed but of type number', async function() {
+        const errorMsg = 'BigNumber type is expected instead number type received';
+        await shouldFail.customFail(
+          eventExist(this.blockNum, this.emitter, 'ShortInt', {
+            value: this.value
+          }), errorMsg);
+      });
+
+      it('throws if an unemitted event is requested', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent', {
+          value: new BN(this.value)
+        }));
+      });
+
+      it('throws if an incorrect value is passed', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'ShortInt', {
+          value: new BN(-23)
+        }));
+      });
+      //-------end tag short int value----->
+    });
+
+    context('long int value', function() {
+      //------start tag long int value----->
+      beforeEach(async function() {
+        this.bigNumValue = new BN('-123456789012345678901234567890');
+        await this.emitter.emitLongInt(this.bigNumValue);
+        this.blockNum = await web3.eth.getBlockNumber();
+      });
+
+      it('accepts emitted events with correct BN', async function() {
+        await eventExist(this.blockNum, this.emitter, 'LongInt', {
+          value: this.bigNumValue
+        });
+      });
+
+      it('throws if a correct value is passed but of type number', async function() {
+        const errorMsg = 'BigNumber type is expected instead number type received';
+        await shouldFail.customFail(
+          eventExist(this.blockNum, this.emitter, 'LongInt', {
+            value: -123456789012345678901234567890
+          }), errorMsg);
+      });
+
+      it('throws if an unemitted event is requested', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent', {
+          value: this.bigNumValue
+        }));
+      });
+
+      it('throws if an incorrect value is passed', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'LongInt', {
+          value: new BN(-2300)
+        }));
+      });
+      //------end tag long int value----->
+    });
+
+    context('long uint value', function() {
+      //------start tag long uint value----->
+      beforeEach(async function() {
+        this.bigNumValue = new BN('123456789012345678901234567890');
+        await this.emitter.emitLongUint(this.bigNumValue);
+        this.blockNum = await web3.eth.getBlockNumber();
+      });
+
+      it('accepts emitted events with correct BN', async function() {
+        await eventExist(this.blockNum, this.emitter, 'LongUint', {
+          value: this.bigNumValue
+        });
+      });
+
+      it('throws if a correct value is passed but of type number', async function() {
+        const errorMsg = 'BigNumber type is expected instead number type received';
+        await shouldFail.customFail(
+          eventExist(this.blockNum, this.emitter, 'LongUint', {
+            value: 123456789012345678901234567890
+          }), errorMsg);
+      });
+
+      it('throws if an unemitted event is requested', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent', {
+          value: this.bigNumValue
+        }));
+        //------end tag long uint value----->
+      });
+
+      it('throws if an incorrect value is passed', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'LongUint', {
+          value: new BN('999999999999999999999999')
+        }));
+      });
+    });
+
+    context('address value', function() {
+      //------start tag address value----->
+      beforeEach(async function() {
+        this.value = '0x811412068E9Fbf25dc300a29E5E316f7122b282c';
+        await this.emitter.emitAddress(this.value);
+        this.blockNum = await web3.eth.getBlockNumber();
+      });
+
+      it('accepts emitted events with correct address', async function() {
+        await eventExist(this.blockNum, this.emitter, 'Address', {
+          value: this.value
+        });
+      });
+
+      it('throws if an unemitted event is requested', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent', {
+          value: this.value
+        }));
+      });
+
+      it('throws if an incorrect value is passed', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent', {
+          value: '0x21d04e022e0b52b5d5bcf90b7f1aabf406be002d'
+        }));
+      });
+      //------end tag address value----->
+    });
+
+    context('bytes value', function() {
+      //------start tag bytes value----->
+      context('with non-null value', function() {
+        beforeEach(async function() {
+          this.value = '0x12345678';
+          await this.emitter.emitBytes(this.value);
+          this.blockNum = await web3.eth.getBlockNumber();
+        });
+
+        it('accepts emitted events with correct bytes', async function() {
+          await eventExist(this.blockNum, this.emitter, 'Bytes', {
+            value: this.value
+          });
+          // expectEvent.inLogs(this.logs, 'Bytes', { value: this.value });
+        });
+
+        it('throws if an unemitted event is requested', async function() {
+          await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent', {
+            value: this.value
+          }));
+        });
+
+        it('throws if an incorrect value is passed', async function() {
+          await shouldFail(eventExist(this.blockNum, this.emitter, 'Bytes', {
+            value: '0x123456'
+          }));
+        });
+      });
+      //------start tag bytes value----->
+    });
+
+    context('with null value', function() {
+      //------start tag with null value----->
+      beforeEach(async function() {
+        this.value = '0x';
+        await this.emitter.emitBytes(this.value);
+        this.blockNum = await web3.eth.getBlockNumber();
+      });
+
+      it('accepts emitted events with correct bytes', async function() {
+        // expectEvent.inLogs(this.logs, 'Bytes', { value: null });
+        await eventExist(this.blockNum, this.emitter, 'Bytes', {
+          value: null
+        });
+      });
+
+      it('throws if an unemitted event is requested', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent', {
+          value: null
+        }));
+      });
+
+      it('throws if an incorrect value is passed', async function() {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'Bytes', {
+          value: '0x123456'
+        }));
+      });
+      //-----end tag with null value----->
+    });
+    //==============WITH SINGLE ARGUMENT CLOSING TAG========>
+  });
+
+  describe('with multiple arguments', function () {
+    //-----start tag with multiple arguments----->
+    beforeEach(async function () {
+      this.uintValue = new BN('123456789012345678901234567890');
+      this.booleanValue = true;
+      this.stringValue = 'OpenZeppelin';
+      await this.emitter.emitLongUintBooleanString(this.uintValue, this.booleanValue, this.stringValue);
+      this.blockNum = await web3.eth.getBlockNumber();
+    });
+
+    it('accepts correct values', async function () {
+      await eventExist(this.blockNum, this.emitter, 'LongUintBooleanString', {
+        uintValue: this.uintValue, booleanValue: this.booleanValue, stringValue: this.stringValue,
+      });
+    });
+
+    it('throws with correct values assigned to wrong arguments', async function () {
+      await shouldFail(eventExist(this.blockNum, this.emitter, 'LongUintBooleanString', {
+      uintValue: this.booleanValue, booleanValue: this.uintValue, stringValue: this.stringValue,
+      }));
+    });
+
+    it('throws when any of the values is incorrect', async function () {
+      await shouldFail(eventExist(this.blockNum, this.emitter, 'LongUintBooleanString', {
+      uintValue: new BN(23), booleanValue: this.booleanValue, stringValue: this.stringValue,
+      }));
+
+      await shouldFail(eventExist(this.blockNum, this.emitter, 'LongUintBooleanString', {
+        uintValue: this.uintValue, booleanValue: false, stringValue: this.stringValue,
+      }));
+
+      await shouldFail(eventExist(this.blockNum, this.emitter, 'LongUintBooleanString', {
+        uintValue: this.uintValue, booleanValue: this.booleanValue, stringValue: 'ClosedZeppelin',
+      }));
+    });
+    //-----end tag with multiple arguments----->
+  });
+
+    describe('with multiple events', function () {
+      //-----start tag with multiple events----->
+      beforeEach(async function () {
+        this.uintValue = 42;
+        this.booleanValue = true;
+        await this.emitter.emitLongUintAndBoolean(this.uintValue, this.booleanValue);
+        this.blockNum = await web3.eth.getBlockNumber();
+      });
+
+      it('accepts all emitted events with correct values', async function () {
+        await eventExist(this.blockNum, this.emitter,  'LongUint', { value: new BN(this.uintValue) });
+        await eventExist(this.blockNum, this.emitter,  'Boolean', { value: this.booleanValue });
+      });
+
+      it('throws if an unemitted event is requested', async function () {
+        await shouldFail(eventExist(this.blockNum, this.emitter, 'UnemittedEvent', {
+          value: this.uintValue}));
+    });
+
+    it('throws if incorrect values are passed', async function () {
+      await shouldFail(eventExist(this.blockNum, this.emitter, 'LongUint', {
+        value: new BN(23) }));
+
+      await shouldFail(eventExist(this.blockNum, this.emitter, 'Boolean', {
+        value: false }));
+    });
+    //-----end tag with multiple events----->
+  });
+
+
+
+
+  //#############MAIN CLOSING TAG================>
+});

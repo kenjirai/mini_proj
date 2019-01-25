@@ -87,7 +87,7 @@ describe('shouldFail', function () {
       await assertFailure(shouldFail.outOfGas(this.failer.failWithThrow()));
     });
   });
-  
+
   describe('outOfGas', function () {
     it('throws an error with accurate error message', async function () {
       await shouldFail.customFail(throwFailWithCustomMsg('bad fail'), 'bad fail');
