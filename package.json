@@ -20,9 +20,7 @@
   },
   "homepage": "https://github.com/kenjirai/mini_proj#readme",
   "description": "",
-  "dependencies": {
-    "pify": "^4.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai-bn": "^0.1.1"
   }
