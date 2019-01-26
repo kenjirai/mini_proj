@@ -60,6 +60,16 @@ describe('expectEvent', function() {
           value: !this.constructionValues.boolean
         }));
       });
+
+      it(`throws an error if the test expected to fail didn't failed`, async function() {
+        await assertFailure(
+          internalFailWithMsg(
+            eventExist(this.emitter, 'Boolean', {
+              value: this.constructionValues.boolean
+            })
+          )
+        );
+      });
       //------end tag boolean value----->
     });
 
@@ -96,6 +106,14 @@ describe('expectEvent', function() {
 
       it('throws if an unemitted event is requested', async function() {
         await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent'));
+      });
+
+      it(`throws an error if the test expected to fail didn't failed`, async function() {
+        await assertFailure(
+          internalFailWithMsg(
+            eventExist(this.emitter, 'Argumentless')
+            )
+          );
       });
     });
     //------end tag event argumentless----->
@@ -135,6 +153,14 @@ describe('expectEvent', function() {
         await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
           value: this.value
         }));
+
+        it(`throws an error if the test expected to failed didn't failed`, async function() {
+          await assertFailure(
+            internalFailWithMsg(
+              eventExist(this.emitter, 'ShortUint')
+              )
+            );
+        });
       });
 
       it('throws if a correct JavaScript number is passed', async function() {
