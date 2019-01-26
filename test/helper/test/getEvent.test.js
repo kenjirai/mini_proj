@@ -1,9 +1,9 @@
-const shouldFail = require('../shouldFail');
 const EventEmitter = artifacts.require('EventEmitter');
 const IndirectEventEmitter = artifacts.require('IndirectEventEmitter');
 const { BN, should } = require('../setup');
 const { eventExist } = require('../getEvents');
-const { assertFailure } = require('../misc');
+const { assertFailure, internalFailWithMsg } = require('../failureUtils');
+
 describe('expectEvent', function() {
   //###########MAIN OPENING TAG==============>
 
@@ -33,7 +33,7 @@ describe('expectEvent', function() {
       });
 
       it('throws if correct Javascript number is passed', async function() {
-        await shouldFail(
+        await internalFailWithMsg(
           eventExist(this.emitter, 'ShortUint', {
             value: this.constructionValues.uint
           }));
@@ -41,7 +41,7 @@ describe('expectEvent', function() {
       });
 
       it('throws if an incorrect value is passed', async function() {
-        await shouldFail(eventExist(this.emitter, 'ShortUint', {
+        await internalFailWithMsg(eventExist(this.emitter, 'ShortUint', {
           value: new BN(23)
         }));
       });
@@ -56,7 +56,7 @@ describe('expectEvent', function() {
       });
 
       it('throws if an incorrect value is passed', async function() {
-        await shouldFail(eventExist(this.emitter, 'Boolean', {
+        await internalFailWithMsg(eventExist(this.emitter, 'Boolean', {
           value: !this.constructionValues.boolean
         }));
       });
@@ -70,13 +70,13 @@ describe('expectEvent', function() {
       });
 
       it('throws if an incorrect string is passed', async function() {
-        await shouldFail(eventExist(this.emitter, 'String', {
+        await internalFailWithMsg(eventExist(this.emitter, 'String', {
           value: 'ClosedZeppelin'
         }));
       });
 
       it('throws if an unemitted event is requested', async function() {
-        await shouldFail(eventExist(this.emitter, 'Unemitted Event'));
+        await internalFailWithMsg(eventExist(this.emitter, 'Unemitted Event'));
       });
       //------start tag string value----->
     });
@@ -95,7 +95,7 @@ describe('expectEvent', function() {
       });
 
       it('throws if an unemitted event is requested', async function() {
-        await shouldFail(eventExist(this.emitter, 'UnemittedEvent'));
+        await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent'));
       });
     });
     //------end tag event argumentless----->
@@ -119,26 +119,26 @@ describe('expectEvent', function() {
 
       it('throws if a correct value is passed but of type number', async function() {
         const errorMsg = 'BigNumber type is expected instead number type received';
-        await shouldFail.customFail(
+        await internalFailWithMsg(
           eventExist(this.emitter, 'ShortUint', {
             value: this.value
           }), errorMsg);
       });
 
       it('throws if an emitted event with correct BN and incorrect name is requested', async function() {
-        await shouldFail(eventExist(this.emitter, 'ShortUint', {
+        await internalFailWithMsg(eventExist(this.emitter, 'ShortUint', {
           number: new BN(this.value)
         }));
       });
 
       it('throws if an unemitted event is requested', async function() {
-        await shouldFail(eventExist(this.emitter, 'UnemittedEvent', {
+        await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
           value: this.value
         }));
       });
 
       it('throws if a correct JavaScript number is passed', async function() {
-        await shouldFail(eventExist(this.emitter, 'ShortUint', {
+        await internalFailWithMsg(eventExist(this.emitter, 'ShortUint', {
           value: 23
         }));
       });
@@ -150,7 +150,6 @@ describe('expectEvent', function() {
       beforeEach(async function() {
         this.value = -42;
         await this.emitter.emitShortInt(this.value);
-
       });
 
       it('accepts emitted events with correct BN', async function() {
@@ -161,20 +160,20 @@ describe('expectEvent', function() {
 
       it('throws if a correct value is passed but of type number', async function() {
         const errorMsg = 'BigNumber type is expected instead number type received';
-        await shouldFail.customFail(
+        await internalFailWithMsg(
           eventExist(this.emitter, 'ShortInt', {
             value: this.value
           }), errorMsg);
       });
 
       it('throws if an unemitted event is requested', async function() {
-        await shouldFail(eventExist(this.emitter, 'UnemittedEvent', {
+        await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
           value: new BN(this.value)
         }));
       });
 
       it('throws if an incorrect value is passed', async function() {
-        await shouldFail(eventExist(this.emitter, 'ShortInt', {
+        await internalFailWithMsg(eventExist(this.emitter, 'ShortInt', {
           value: new BN(-23)
         }));
       });
@@ -186,7 +185,6 @@ describe('expectEvent', function() {
       beforeEach(async function() {
         this.bigNumValue = new BN('-123456789012345678901234567890');
         await this.emitter.emitLongInt(this.bigNumValue);
-
       });
 
       it('accepts emitted events with correct BN', async function() {
@@ -197,20 +195,20 @@ describe('expectEvent', function() {
 
       it('throws if a correct value is passed but of type number', async function() {
         const errorMsg = 'BigNumber type is expected instead number type received';
-        await shouldFail.customFail(
+        await internalFailWithMsg(
           eventExist(this.emitter, 'LongInt', {
             value: -123456789012345678901234567890
           }), errorMsg);
       });
 
       it('throws if an unemitted event is requested', async function() {
-        await shouldFail(eventExist(this.emitter, 'UnemittedEvent', {
+        await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
           value: this.bigNumValue
         }));
       });
 
       it('throws if an incorrect value is passed', async function() {
-        await shouldFail(eventExist(this.emitter, 'LongInt', {
+        await internalFailWithMsg(eventExist(this.emitter, 'LongInt', {
           value: new BN(-2300)
         }));
       });
@@ -222,7 +220,6 @@ describe('expectEvent', function() {
       beforeEach(async function() {
         this.bigNumValue = new BN('123456789012345678901234567890');
         await this.emitter.emitLongUint(this.bigNumValue);
-
       });
 
       it('accepts emitted events with correct BN', async function() {
@@ -233,21 +230,21 @@ describe('expectEvent', function() {
 
       it('throws if a correct value is passed but of type number', async function() {
         const errorMsg = 'BigNumber type is expected instead number type received';
-        await shouldFail.customFail(
+        await internalFailWithMsg(
           eventExist(this.emitter, 'LongUint', {
             value: 123456789012345678901234567890
           }), errorMsg);
       });
 
       it('throws if an unemitted event is requested', async function() {
-        await shouldFail(eventExist(this.emitter, 'UnemittedEvent', {
+        await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
           value: this.bigNumValue
         }));
         //------end tag long uint value----->
       });
 
       it('throws if an incorrect value is passed', async function() {
-        await shouldFail(eventExist(this.emitter, 'LongUint', {
+        await internalFailWithMsg(eventExist(this.emitter, 'LongUint', {
           value: new BN('999999999999999999999999')
         }));
       });
@@ -258,7 +255,6 @@ describe('expectEvent', function() {
       beforeEach(async function() {
         this.value = '0x811412068E9Fbf25dc300a29E5E316f7122b282c';
         await this.emitter.emitAddress(this.value);
-
       });
 
       it('accepts emitted events with correct address', async function() {
@@ -268,13 +264,13 @@ describe('expectEvent', function() {
       });
 
       it('throws if an unemitted event is requested', async function() {
-        await shouldFail(eventExist(this.emitter, 'UnemittedEvent', {
+        await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
           value: this.value
         }));
       });
 
       it('throws if an incorrect value is passed', async function() {
-        await shouldFail(eventExist(this.emitter, 'UnemittedEvent', {
+        await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
           value: '0x21d04e022e0b52b5d5bcf90b7f1aabf406be002d'
         }));
       });
@@ -287,7 +283,6 @@ describe('expectEvent', function() {
         beforeEach(async function() {
           this.value = '0x12345678';
           await this.emitter.emitBytes(this.value);
-
         });
 
         it('accepts emitted events with correct bytes', async function() {
@@ -298,13 +293,13 @@ describe('expectEvent', function() {
         });
 
         it('throws if an unemitted event is requested', async function() {
-          await shouldFail(eventExist(this.emitter, 'UnemittedEvent', {
+          await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
             value: this.value
           }));
         });
 
         it('throws if an incorrect value is passed', async function() {
-          await shouldFail(eventExist(this.emitter, 'Bytes', {
+          await internalFailWithMsg(eventExist(this.emitter, 'Bytes', {
             value: '0x123456'
           }));
         });
@@ -317,7 +312,6 @@ describe('expectEvent', function() {
       beforeEach(async function() {
         this.value = '0x';
         await this.emitter.emitBytes(this.value);
-
       });
 
       it('accepts emitted events with correct bytes', async function() {
@@ -328,13 +322,13 @@ describe('expectEvent', function() {
       });
 
       it('throws if an unemitted event is requested', async function() {
-        await shouldFail(eventExist(this.emitter, 'UnemittedEvent', {
+        await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
           value: null
         }));
       });
 
       it('throws if an incorrect value is passed', async function() {
-        await shouldFail(eventExist(this.emitter, 'Bytes', {
+        await internalFailWithMsg(eventExist(this.emitter, 'Bytes', {
           value: '0x123456'
         }));
       });
@@ -362,7 +356,7 @@ describe('expectEvent', function() {
     });
 
     it('throws with correct values assigned to wrong arguments', async function() {
-      await shouldFail(eventExist(this.emitter, 'LongUintBooleanString', {
+      await internalFailWithMsg(eventExist(this.emitter, 'LongUintBooleanString', {
         uintValue: this.booleanValue,
         booleanValue: this.uintValue,
         stringValue: this.stringValue,
@@ -370,19 +364,19 @@ describe('expectEvent', function() {
     });
 
     it('throws when any of the values is incorrect', async function() {
-      await shouldFail(eventExist(this.emitter, 'LongUintBooleanString', {
+      await internalFailWithMsg(eventExist(this.emitter, 'LongUintBooleanString', {
         uintValue: new BN(23),
         booleanValue: this.booleanValue,
         stringValue: this.stringValue,
       }));
 
-      await shouldFail(eventExist(this.emitter, 'LongUintBooleanString', {
+      await internalFailWithMsg(eventExist(this.emitter, 'LongUintBooleanString', {
         uintValue: this.uintValue,
         booleanValue: false,
         stringValue: this.stringValue,
       }));
 
-      await shouldFail(eventExist(this.emitter, 'LongUintBooleanString', {
+      await internalFailWithMsg(eventExist(this.emitter, 'LongUintBooleanString', {
         uintValue: this.uintValue,
         booleanValue: this.booleanValue,
         stringValue: 'ClosedZeppelin',
@@ -409,17 +403,17 @@ describe('expectEvent', function() {
     });
 
     it('throws if an unemitted event is requested', async function() {
-      await shouldFail(eventExist(this.emitter, 'UnemittedEvent', {
+      await internalFailWithMsg(eventExist(this.emitter, 'UnemittedEvent', {
         value: this.booleanValue
       }));
     });
 
     it('throws if incorrect values are passed', async function() {
-      await shouldFail(eventExist(this.emitter, 'LongUint', {
+      await internalFailWithMsg(eventExist(this.emitter, 'LongUint', {
         value: new BN(23)
       }));
 
-      await shouldFail(eventExist(this.emitter, 'Boolean', {
+      await internalFailWithMsg(eventExist(this.emitter, 'Boolean', {
         value: false
       }));
     });
@@ -432,7 +426,6 @@ describe('expectEvent', function() {
       this.secondEmitter = await IndirectEventEmitter.new();
       this.value = 'OpenZeppelin';
       await this.emitter.emitStringAndEmitIndirectly(this.value, this.secondEmitter.address);
-
     });
 
     it('accepts events emitted by the directly called contract', async function() {
@@ -442,7 +435,7 @@ describe('expectEvent', function() {
     });
 
     it('throws when passing events emitted by the indirectly called contract', async function() {
-      await shouldFail(eventExist(this.emitter, 'IndirectString', {
+      await internalFailWithMsg(eventExist(this.emitter, 'IndirectString', {
         value: this.value
       }));
     });
@@ -468,19 +461,19 @@ describe('expectEvent', function() {
           });
 
           it('throws if an incorrect string is passed', async function() {
-            await shouldFail(eventExist(this.emitter, 'String', {
+            await internalFailWithMsg(eventExist(this.emitter, 'String', {
               value: 'ClosedZeppelin'
             }));
           });
 
           it('throws if an event emitted from other contract is passed', async function() {
-            await shouldFail(eventExist(this.emitter, 'IndirectString', {
+            await internalFailWithMsg(eventExist(this.emitter, 'IndirectString', {
               value: this.value
             }));
           });
 
           it('throws if an incorrect emitter is passed', async function() {
-            await shouldFail(eventExist(this.secondEmitter, 'String', {
+            await internalFailWithMsg(eventExist(this.secondEmitter, 'String', {
               value: this.value
             }));
           });
@@ -496,25 +489,25 @@ describe('expectEvent', function() {
           });
 
           it('throws if an unemitted event is requested', async function() {
-            await shouldFail(eventExist(this.secondEmitter, 'UnemittedEvent', {
+            await internalFailWithMsg(eventExist(this.secondEmitter, 'UnemittedEvent', {
               value: this.value
             }));
           });
 
           it('throws if an incorrect string is passed', async function() {
-            await shouldFail(eventExist(this.secondEmitter, 'IndirectString', {
+            await internalFailWithMsg(eventExist(this.secondEmitter, 'IndirectString', {
               value: 'ClosedZeppelin'
             }));
           });
 
           it('throws if an event emitted from other contract is passed', async function() {
-            await shouldFail(eventExist(this.secondEmitter, 'String', {
+            await internalFailWithMsg(eventExist(this.secondEmitter, 'String', {
               value: 'ClosedZeppelin'
             }));
           });
 
           it('throws if an incorrect emitter is passed', async function() {
-            await shouldFail(eventExist(this.emitter, 'IndirectString', {
+            await internalFailWithMsg(eventExist(this.emitter, 'IndirectString', {
               value: 'ClosedZeppelin'
             }));
           });

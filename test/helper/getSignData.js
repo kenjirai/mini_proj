@@ -6,7 +6,7 @@ async function getSignData(docData, account) {
   //console.log(signature);
   //console.log('This is the message:', message);
   //console.log('This is hash:', hashMsg);
-  //console.log(signature);  
+  //console.log(signature);
   signature = signature.substr(2); //remove 0x
   const r = '0x' + signature.slice(0, 64)
   const s = '0x' + signature.slice(64, 128)
@@ -26,7 +26,7 @@ async function getSignData(docData, account) {
     }
   }
 
-  return { 
+  return {
     r: r,
     s: s,
     v: v_decimal,
@@ -39,6 +39,3 @@ async function getSignData(docData, account) {
 module.exports = {
   getSignData,
 };
-
-
-
