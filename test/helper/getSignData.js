@@ -16,8 +16,6 @@ async function getSignData(docData, account) {
     v_decimal += 27;
   }
 
-  //console.log('v_decimal', v_decimal);
-
   if (v_decimal != 27 && v_decimal != 28) {
     return {
       error: new Error('V should be either 27 or 28')
@@ -31,7 +29,6 @@ async function getSignData(docData, account) {
     docHash: docHash,
     signature: signature
   }
-
 }
 
 module.exports = getSignData;

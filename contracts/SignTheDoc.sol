@@ -44,6 +44,13 @@ contract SignTheDoc {
     _;
   }
 
+  modifier isExpired(uint256 expiryDate) {
+    require(
+      expiryDate > block.timestamp,
+      'contract expiry date should be greater than current time');
+    _;
+  }
+
   function createDocToSign(
     uint256 expiryDate,
     bytes memory signature,
@@ -54,8 +61,10 @@ contract SignTheDoc {
     uint8 v
   )
   public
+  isExpired(expiryDate)
   {
     require(verifySignature(docHash, r, s, v));
+
     recordInitialDoc(
       expiryDate,
       signature,
@@ -72,6 +81,7 @@ contract SignTheDoc {
   )
   public
   {
+
     Creator storage creator = docData[docHash];
 
     creator.creatorAddress = msg.sender;
@@ -93,6 +103,7 @@ contract SignTheDoc {
         creator.authorisedToSign[authorisedSignerList[i]] = true;
       }
   }
+
 }
 
   function verifySignature(bytes32 hash, bytes32 r, bytes32 s, uint8 v) public view returns(bool) {
@@ -101,20 +112,20 @@ contract SignTheDoc {
     return ecrecover(prefixedHash, v, r, s) == msg.sender;
   }
     //Retrun the content of the struct
-  function getDocData(bytes32 docHash)
+  function getDocData(bytes32 regDocHash)
     public
     view
     returns(
       address creatorAddress,
       uint256 creationDate,
       uint256 expiryDate,
-      bytes32 dochash,
+      bytes32 docHash,
       bytes memory signature,
       address[] memory authorisedSigners,
       address[] memory whoSigned
     )
     {
-      Creator memory cr = docData[docHash];
+      Creator memory cr = docData[regDocHash];
       return(
         cr.creatorAddress,
         cr.creationDate,

@@ -1,21 +1,31 @@
 
 const { ganache_evm_mine,  ganache_evm_increaseTime } = require('./ganacheRPC');
+const { BN  } = require('./setup');
 
 function advanceBlock() {
   ganache_evm_mine()
 }
 
 // Returns the time of the last mined block in seconds
-async function latest () {
-  var latestBlock = await web3.eth.getBlockNumber();
-  var blockInfo = await web3.eth.getBlock(latestBlock);
-  return blockInfo.timestamp;
+async function latest() {
+  const block = await web3.eth.getBlock('latest');
+  return new BN(block.timestamp);
+}
+
+async function latestBlock() {
+  const block = await web3.eth.getBlock('latest');
+  return new BN(block.number);
 }
 
 // Increases ganache time by the passed duration in seconds
-async function increase (duration) {
-  if (duration < 0) throw Error(`Cannot increase time by a negative amount (${duration})`);
-  await ganache_evm_increaseTime(duration);
+async function increase(duration) {
+  if (!BN.isBN(duration)) {
+    duration = new BN(duration);
+  }
+
+  if (duration.isNeg()) throw Error(`Cannot increase time by a negative amount (${duration})`);
+
+  await ganache_evm_increaseTime(duration.toNumber());
   await advanceBlock();
 }
 
@@ -26,25 +36,43 @@ async function increase (duration) {
  *
  * @param target time in seconds
  */
-async function increaseTo (target) {
+async function increaseTo(target) {
+  if (!BN.isBN(target)) {
+    target = new BN(target);
+  }
+
   const now = (await latest());
-  if (target < now) throw Error(`Cannot increase current time (${now}) to a moment in the past (${target})`);
-  const diff = target - now;
+
+  if (target.lt(now)) throw Error(`Cannot increase current time (${now}) to a moment in the past (${target})`);
+  const diff = target.sub(now);
   return increase(diff);
 }
 
 const duration = {
-  seconds: function (val) { return val; },
-  minutes: function (val) { return val * this.seconds(60); },
-  hours: function (val) { return val * this.minutes(60); },
-  days: function (val) { return val * this.hours(24); },
-  weeks: function (val) { return val * this.days(7); },
-  years: function (val) { return val * this.days(365); },
+  seconds: function(val) {
+    return new BN(val);
+  },
+  minutes: function(val) {
+    return new BN(val).mul(this.seconds('60'));
+  },
+  hours: function(val) {
+    return new BN(val).mul(this.minutes('60'));
+  },
+  days: function(val) {
+    return new BN(val).mul(this.hours('24'));
+  },
+  weeks: function(val) {
+    return new BN(val).mul(this.days('7'));
+  },
+  years: function(val) {
+    return new BN(val).mul(this.days('365'));
+  },
 };
 
 module.exports = {
   advanceBlock,
   latest,
+  latestBlock,
   increase,
   increaseTo,
   duration,
