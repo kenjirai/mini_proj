@@ -1,12 +1,16 @@
 async function getSignData(docData, account) {
   var docHash = await web3.utils.keccak256(docData);
   var signature = await web3.eth.sign(docHash, account);
-  signature = signature.substr(2); //remove 0x
+
+  //Remove 0x prefix
+  signature = signature.substr(2);
   const r = '0x' + signature.slice(0, 64)
   const s = '0x' + signature.slice(64, 128)
-  var v = '0x' + signature.slice(128, 130)
-  //console.log('v', v);
+  const v = '0x' + signature.slice(128, 130)
   var v_decimal = web3.utils.toDecimal(v)
+
+  //add 0x prefix
+  signature = '0x' + signature;
 
   if (v_decimal < 27) {
     v_decimal += 27;

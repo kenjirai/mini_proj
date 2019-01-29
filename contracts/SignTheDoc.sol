@@ -6,10 +6,10 @@ contract SignTheDoc {
         address creatorAddress;
         uint256 creationDate;
         uint256 expiryDate;
-        bytes32 docHash; 
-        bytes signature; 
+        bytes32 docHash;
+        bytes signature;
         address[] authorisedSignerList;
-        address[] whoSigned; 
+        address[] whoSigned;
         mapping(address => bool) authorisedToSign;
         mapping(address => Signer) signerInfo;
     }
@@ -29,7 +29,6 @@ contract SignTheDoc {
 
     //Probably unnecessary
     Signer[] signers;
-
 
   modifier isAuthorised(bytes32 docHash) {
     if(docData[docHash].authorisedSignerList.length == 0) {

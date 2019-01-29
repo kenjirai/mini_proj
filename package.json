@@ -23,6 +23,9 @@
   "dependencies": {},
   "devDependencies": {
     "chai-bn": "^0.1.1",
+    "file-api": "^0.10.4",
+    "filereader": "^0.10.3",
+    "mime": "^1.6.0",
     "semver": "^5.6.0"
   }
 }
