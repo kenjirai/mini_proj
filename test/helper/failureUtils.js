@@ -1,4 +1,5 @@
 const { should } = require('./setup')
+const shouldFail = require('./shouldFail');
 
 async function customThrow(msg) {
 	throw new Error(msg)
@@ -6,7 +7,7 @@ async function customThrow(msg) {
 
 async function assertFailure (promise) {
   try {
-    await promise;
+	 	await promise;
   } catch (error) {
     return;
   }
