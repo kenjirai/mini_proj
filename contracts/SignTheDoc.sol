@@ -61,10 +61,9 @@ contract SignTheDoc {
     uint8 v
   )
   public
+  verifySignature(docHash, r, s, v)
   isExpired(expiryDate)
   {
-    require(verifySignature(docHash, r, s, v));
-
     recordInitialDoc(
       expiryDate,
       signature,
@@ -106,11 +105,14 @@ contract SignTheDoc {
 
 }
 
-  function verifySignature(bytes32 hash, bytes32 r, bytes32 s, uint8 v) public view returns(bool) {
+  modifier verifySignature(bytes32 hash, bytes32 r, bytes32 s, uint8 v) {
     bytes memory prefix = "\x19Ethereum Signed Message:\n32";
     bytes32 prefixedHash = keccak256(abi.encodePacked(prefix, hash));
-    return ecrecover(prefixedHash, v, r, s) == msg.sender;
+    require(ecrecover(prefixedHash, v, r, s) == msg.sender,
+      'Signature verification failed');
+    _;
   }
+
     //Retrun the content of the struct
   function getDocData(bytes32 regDocHash)
     public

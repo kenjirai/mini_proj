@@ -45,7 +45,6 @@ contract('Signature', function([accOne, accTwo]) {
           }
       });
     });
-
   });
 
   describe('it should get accurate signed Address', function() {
