@@ -87,55 +87,84 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour]) {
           await shouldFail(this.deploy('expiryDate', this.mockExpiryDate));
         });
 
-        it('throws an error if failure not raised', async function() {
+        it('throws an error if expected failure did not raised', async function() {
           await assertFailure(shouldFail(this.deploy('expiryDate', this.expiryDate)));
         });
 
         it('rejects the deployment with correct message if the date is already expired', async function() {
           await shouldFail.reverting.withMessage(this.deploy('expiryDate', this.mockExpiryDate),
-            'contract expiry date should be greater than current time');
+            'Contract expiry date should be greater than current time.');
         });
       }); //----end tag incorrect expiry date---->
 
-      describe('verifySignature', function() {
-        beforeEach(async function() {
-          this.mockHash = web3.utils.sha3('yabadabadoooo')
-          this.mockData = await getSignData(this.mockHash, accTwo)
-          this.errorMsg = "Signature verification failed"
-        });
-
-        it('throws an error for incorrect hash', async function() {
-          await shouldFail.reverting.withMessage(
-            this.deploy('docHash', this.mockHash),
-            this.errorMsg
+      context('authorisedSignerList', function() {
+        it('throws an error if expected failure did not raised', async function() {
+          await assertFailure(
+            shouldFail(this.deploy('authorisedSignerList', [accOne, accTwo]))
           );
         });
 
-        it('throws an error for incorrect r value of ECDSA signature ', async function() {
-          await shouldFail.reverting.withMessage(
-            this.deploy('r', this.mockData.r),
-            this.errorMsg
-          );
+        it('rejects if type string is passed', async function() {
+          await shouldFail(this.deploy('authorisedSignerList', 'someAddress'));
         });
 
-        it('throws an error for incorrect s value of ECDSA signature ', async function() {
-          await shouldFail.reverting.withMessage(
-            this.deploy('s', this.mockData.s),
-            this.errorMsg
-          );
+        it('rejects if type number is passed', async function() {
+          await shouldFail(this.deploy('authorisedSignerList', 123));
         });
-
-        it('throws an error for incorrect recovery id, v value ', async function() {
-          await shouldFail.reverting.withMessage(
-            this.deploy('v', this.mockData.v),
-            this.errorMsg
-          );
-        });
-
-      }); //----end tag verifySignature--->
-
+      }); //----end tag authorisedSignerList---->
     }); //----end tag deployment should fail---->
 
-  }); //----end tag createDocToSign ---->
+    describe('verifySignature', function() {
+      beforeEach(async function() {
+        this.mockHash = web3.utils.sha3('yabadabadoooo')
+        this.mockData = await getSignData(this.mockHash, accTwo)
+        this.errorMsg = "Signature verification failed"
+      });
 
+      it('throws an error for incorrect hash', async function() {
+        await shouldFail.reverting.withMessage(
+          this.deploy('docHash', this.mockHash),
+          this.errorMsg
+        );
+      });
+
+      it('throws an error for incorrect r value of ECDSA signature ', async function() {
+        await shouldFail.reverting.withMessage(
+          this.deploy('r', this.mockData.r),
+          this.errorMsg
+        );
+      });
+
+      it('throws an error for incorrect s value of ECDSA signature ', async function() {
+        await shouldFail.reverting.withMessage(
+          this.deploy('s', this.mockData.s),
+          this.errorMsg
+        );
+      });
+
+      it('throws an error for incorrect recovery id, v value ', async function() {
+        await shouldFail.reverting.withMessage(
+          this.deploy('v', this.mockData.v),
+          this.errorMsg
+        );
+      });
+    }); //----end tag verifySignature--->
+
+    describe('document hash should be unique', function() {
+      beforeEach(async function() {
+        await this.deploy();
+      });
+
+      it('throws an error if same document hash exist already', async function() {
+        await shouldFail(this.deploy());
+      });
+
+      it('throws an error with message if same document hash exist already', async function() {
+        await shouldFail.reverting.withMessage(
+          this.deploy(),
+          'Hash must be unique.'
+        );
+      });
+    }); //----end tag document hash--->
+  }); //----end tag createDocToSign ---->
 }); //===========MAIN TAG END===========>
