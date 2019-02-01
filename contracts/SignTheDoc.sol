@@ -105,10 +105,6 @@ contract SignTheDoc {
     //possible bug
     creator.authorisedSignerList = authorisedSignerList;
 
-    if (authorisedSignerList.length != 0) {
-      creator.authorisedSignerList = authorisedSignerList;
-    }
-
     if (authorisedSignerList.length == 1) {
       creator.authorisedToSign[authorisedSignerList[0]] = true;
     } else if (authorisedSignerList.length > 1) {
@@ -117,6 +113,7 @@ contract SignTheDoc {
       }
     }
   }
+  
   //Returns the content of the struct
   function getDocData(bytes32 regDocHash)
   public
