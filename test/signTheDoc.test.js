@@ -144,7 +144,7 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour]) {
 
       it('throws an error for incorrect recovery id, v value ', async function() {
         await shouldFail.reverting.withMessage(
-          this.deploy('v', this.mockData.v),
+          this.deploy('v', new BN(42)),
           this.errorMsg
         );
       });
