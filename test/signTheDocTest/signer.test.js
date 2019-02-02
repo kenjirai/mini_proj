@@ -61,6 +61,10 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour]) {
         this.signerInfo = await this.std.getSignerInfo(this.signData.docHash, this.signerAddress);
       });
 
+      it('verifies correct signer address entry', async function() {
+        (this.signerInfo.signerAddress).should.be.equal(this.signerAddress);
+      });
+
       it('verifies correct document hash entry', async function() {
         (this.signerInfo.docHash).should.be.equal(this.signData.docHash);
       });

@@ -15,6 +15,7 @@ contract SignTheDoc {
   }
 
   struct Signer {
+    address signerAddress;
     uint256 signedDate;
     bytes32 docHash;
     bytes signature;
@@ -133,19 +134,25 @@ contract SignTheDoc {
     address[] memory authorisedSigners,
     address[] memory whoSigned
   ) {
-
     Creator memory cr = docData[regDocHash];
     return (cr.creatorAddress, cr.creationDate, cr.expiryDate, cr.docHash, cr.signature, cr.authorisedSignerList, cr.whoSigned);
   }
 
   function signTheDoc(bytes32 signerDocHash, bytes32 r, bytes32 s,uint8 v, bytes memory signature) public verifySignature(signerDocHash, r, s, v) {
-    Signer memory signer = Signer(block.timestamp, signerDocHash, signature);
+    Signer memory signer = Signer(msg.sender, block.timestamp, signerDocHash, signature);
     docData[signerDocHash].signerInfo[msg.sender] = signer;
   }
 
-  function getSignerInfo(bytes32 signerDocHash, address signer) public view returns(uint256 signedDate, bytes32 docHash, bytes memory signature) {
+  function getSignerInfo(bytes32 signerDocHash, address signer)
+   public
+   view
+   returns(
+     address signerAddress,
+     uint256 signedDate,
+     bytes32 docHash,
+     bytes memory signature) {
     Signer memory si = docData[signerDocHash].signerInfo[signer];
-    return (si.signedDate, si.docHash, si.signature);
+    return (si.signerAddress, si.signedDate, si.docHash, si.signature);
   }
 
   function isAuthorisedToSign(bytes32 docHash, address signer) public view returns(bool) {
