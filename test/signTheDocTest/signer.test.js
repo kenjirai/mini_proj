@@ -7,12 +7,14 @@ const getSignData = require('../helper/getSignData');
 const shouldFail = require('../helper/shouldFail');
 const deployDoc = require('../helper/deployDoc');
 
-contract('SignTheDoc', function([accOne, accTwo, accThree, accFour]) {
+contract('SignTheDoc', function([accOne, accTwo, accThree, accFour, accFive]) {
   beforeEach(async function() {
-    this.std = await SignTheDoc.new({from:accOne});
+    this.creatorAccount = accOne;
+    this.std = await SignTheDoc.new({
+      from: this.creatorAccount
+    });
     this.msg = 'hello world!'
-    this.signMsg = await web3.eth.sign(this.msg, accOne);
-    this.signData = await getSignData(this.signMsg, accOne);
+    this.signData = await getSignData(this.msg, this.creatorAccount);
     this.latestBlockTime = await latest();
     this.expiryDate = this.latestBlockTime.add(duration.days(1));
     this.authorisedSignerList = [accTwo, accFour];
@@ -29,34 +31,43 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour]) {
         depData.docHash,
         depData.r,
         depData.s,
-        depData.v);
+        depData.v, {
+          from: this.creatorAccount
+        });
+    }
+
+    this.signDoc = async function(signerAccount, signerSignedData, modify, value) {
+      const depData = deployDoc(
+        modify, value, null, signerSignedData, null
+      );
+
+      await this.std.signTheDoc(
+        accOne,
+        depData.docHash,
+        depData.r,
+        depData.s,
+        depData.v,
+        signerSignedData.signature, {
+          from: signerAccount
+        }
+      );
     }
   });
 
-
-  // check if the correct document hash is open for signature.
-
-  describe('Signer Signing process', function() {
+  describe('signTheDoc', function() {
     beforeEach(async function() {
+      this.signerMsg = 'hello world!'
       await this.deploy();
     });
 
-    describe('Sucessfully registered signed data', function() {
+    context('sucessfully publish correct signed data', function() {
       beforeEach(async function() {
         this.signerAddress = accTwo;
-        this.signerMsg = 'hello world!';
         this.signData = await getSignData(this.signerMsg, this.signerAddress);
         this.latestTime = await latest();
         this.tolerance_seconds = new BN(2);
 
-        await this.std.signTheDoc(
-          this.signData.docHash,
-          this.signData.r,
-          this.signData.s,
-          this.signData.v,
-          this.signData.signature,
-          {from:accTwo}
-        );
+        await this.signDoc(accTwo, this.signData);
 
         this.signerInfo = await this.std.getSignerInfo(this.signData.docHash, this.signerAddress);
       });
@@ -76,15 +87,72 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour]) {
       it('verifies correct signed time entry', async function() {
         (this.signerInfo.signedDate).should.be.bignumber.closeTo(this.latestTime, this.tolerance_seconds);
       });
+    }); //---end tag sucessfully registered --->>
+
+    context('invalid document hash', function () {
+      beforeEach(async function() {
+        this.signerAddress = accThree;
+        this.signData = await getSignData(this.signerMsg, this.signerAddress);
+        this.mockHash = web3.utils.sha3('ethereum mining rig');
+      });
+
+      it('throws for incorrect document hash', async function() {
+        await shouldFail.reverting.withMessage(
+          this.signDoc(accTwo, this.signData, 'docHash', this.mockHash),
+          'Failed to verify document hash.');
+      });
     });
 
+    context('signer signature validation', function() {
+      beforeEach(async function() {
+        this.signerAddress = accThree;
+        this.signData = await getSignData(this.signerMsg, this.signerAddress);
+        this.mockHash = web3.utils.sha3('ethereum mining rig');
+        this.mockData = await getSignData(this.mockHash, accTwo);
+      });
+
+      it('throws if signature data provided by other accounts', async function() {
+        //msg.sender is account accTwo
+        //signature data is obtained from account accThree
+        await shouldFail.reverting.withMessage(
+          this.signDoc(accTwo, this.signData),
+          'Signature verification failed');
+      });
+
+      it('throws for incorrect r, s and v value of ECDSA signature', async function() {
+        await shouldFail.reverting.withMessage(
+          this.signDoc(accTwo, this.signData, 'r', this.mockData.r),
+          'Signature verification failed'
+        );
+
+          await shouldFail.reverting.withMessage(
+            this.signDoc(accTwo, this.signData, 's', this.mockData.s),
+            'Signature verification failed'
+          );
+
+          await shouldFail.reverting.withMessage(
+            this.signDoc(accTwo, this.signData, 'v', new BN(123)),
+            'Signature verification failed'
+          );
+      }); //----end tag throws for incorrect r, s and v---->
+    });//----end tag signer signature validation---->
+
+    /*
+    context('authorised signer only', function() {
+      beforeEach(async function() {
+        this.signerAddress = accThree;
+        this.signerMsg = 'hello world!';
+        this.signData = await getSignData(this.signerMsg, this.signerAddress);
+    });
+
+    it('throws an error of unauthorise singer', async function() {
+      await shouldFail.reverting.withMessage(
+        this.signDoc(this.signerAddress, this.signData),
+        'Provided address not authorised to sign the document.'
+      );
+    });
   });
-});
+  */
 
-
-// check if the correct document hash is open for signature.
-// check the hash with creator address.
-// check if the signer is authorise to sign.
-// if the signer is authorised to sign than proceed
-// if the signer is not authorise to sign than reject the deployment
-// check if it's correctly registered.
+  }); //----end tag signer signing process---->
+});//---END MAIN TAG --->

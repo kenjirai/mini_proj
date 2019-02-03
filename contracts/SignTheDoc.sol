@@ -1,4 +1,4 @@
-pragma solidity ^ 0.5 .0;
+pragma solidity ^ 0.5.0;
 
 contract SignTheDoc {
 
@@ -53,36 +53,28 @@ contract SignTheDoc {
     _;
   }
 
-  modifier validateCreatorAddress(address creator, bytes32 signerDocHash) {
-    require(
-      docData[signerDocHash].creatorAddress == creator,
-      'Failed to verify creator address');
-    _;
-  }
-
   function isAuthorised(bytes32 docHash) public view returns(bool) {
-    if (docData[docHash].authorisedSignerList.length == 0) {
-      return true;
-    } else {
-      return (docData[docHash].authorisedToSign[msg.sender]);
-    }
+    return (docData[docHash].authorisedToSign[msg.sender]);
   }
 
-  function signerValidation(address creator, bytes32 signerDocHash) public view returns(bool) {
-    require(
-      docData[signerDocHash].creatorAddress == creator,
-      'Failed to verify creator address.'
-    );
-
+  function multipleValidations(address creator, bytes32 signerDocHash) public view returns(bool){
     require(
       signerDocHash == docData[signerDocHash].docHash,
       'Failed to verify document hash.'
     );
 
     require(
-      isAuthorised(signerDocHash),
-      'Provided address not authorised to sign the document.'
+      docData[signerDocHash].creatorAddress == creator,
+      'Failed to verify creator address.'
     );
+
+    if(docData[signerDocHash].authorisedSignerList.length != 0) {
+      require(
+        isAuthorised(signerDocHash),
+        'Provided address not authorised to sign the document.'
+      );
+    }
+    return true;
   }
 
   function createDocToSign(
@@ -138,9 +130,18 @@ contract SignTheDoc {
     return (cr.creatorAddress, cr.creationDate, cr.expiryDate, cr.docHash, cr.signature, cr.authorisedSignerList, cr.whoSigned);
   }
 
-  function signTheDoc(bytes32 signerDocHash, bytes32 r, bytes32 s,uint8 v, bytes memory signature) public verifySignature(signerDocHash, r, s, v) {
+  function signTheDoc(address creator, bytes32 signerDocHash, bytes32 r, bytes32 s, uint8 v, bytes memory signature) public {
+    require(multipleValidations(creator, signerDocHash));
+    require(publishSign(signerDocHash, r, s, v, signature));
+  }
+
+  function publishSign(bytes32 signerDocHash, bytes32 r, bytes32 s, uint8 v, bytes memory signature)
+  public
+  verifySignature(signerDocHash, r, s, v)
+  returns(bool) {
     Signer memory signer = Signer(msg.sender, block.timestamp, signerDocHash, signature);
     docData[signerDocHash].signerInfo[msg.sender] = signer;
+    return true;
   }
 
   function getSignerInfo(bytes32 signerDocHash, address signer)
@@ -154,9 +155,4 @@ contract SignTheDoc {
     Signer memory si = docData[signerDocHash].signerInfo[signer];
     return (si.signerAddress, si.signedDate, si.docHash, si.signature);
   }
-
-  function isAuthorisedToSign(bytes32 docHash, address signer) public view returns(bool) {
-    return docData[docHash].authorisedToSign[signer];
-  }
-
 }
