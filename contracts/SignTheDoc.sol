@@ -141,6 +141,7 @@ contract SignTheDoc {
   returns(bool) {
     Signer memory signer = Signer(msg.sender, block.timestamp, signerDocHash, signature);
     docData[signerDocHash].signerInfo[msg.sender] = signer;
+    docData[signerDocHash].whoSigned.push(msg.sender);
     return true;
   }
 

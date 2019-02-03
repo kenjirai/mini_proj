@@ -42,7 +42,7 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour, accFive]) {
       );
 
       await this.std.signTheDoc(
-        accOne,
+        this.creatorAccount,
         depData.docHash,
         depData.r,
         depData.s,
@@ -69,6 +69,7 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour, accFive]) {
 
         await this.signDoc(accTwo, this.signData);
 
+        this.docInfo = await this.std.getDocData(this.signData.docHash);
         this.signerInfo = await this.std.getSignerInfo(this.signData.docHash, this.signerAddress);
       });
 
@@ -87,6 +88,12 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour, accFive]) {
       it('verifies correct signed time entry', async function() {
         (this.signerInfo.signedDate).should.be.bignumber.closeTo(this.latestTime, this.tolerance_seconds);
       });
+
+      it('correctly updates whoSigned list with signer address', async function() {
+        (this.docInfo.whoSigned.length).should.be.equal(1);
+        (this.docInfo.whoSigned[0]).should.be.equal(this.signerAddress);
+      });
+
     }); //---end tag sucessfully registered --->>
 
     context('invalid document hash', function () {
@@ -101,13 +108,13 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour, accFive]) {
           this.signDoc(accTwo, this.signData, 'docHash', this.mockHash),
           'Failed to verify document hash.');
       });
-    });
+    });//---end tag invalid document hash --->>
 
     context('signer signature validation', function() {
       beforeEach(async function() {
         this.signerAddress = accThree;
         this.signData = await getSignData(this.signerMsg, this.signerAddress);
-        this.mockHash = web3.utils.sha3('ethereum mining rig');
+        this.mockHash = web3.utils.sha3('ethereum is the future');
         this.mockData = await getSignData(this.mockHash, accTwo);
       });
 
@@ -137,22 +144,24 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour, accFive]) {
       }); //----end tag throws for incorrect r, s and v---->
     });//----end tag signer signature validation---->
 
-    /*
     context('authorised signer only', function() {
       beforeEach(async function() {
-        this.signerAddress = accThree;
-        this.signerMsg = 'hello world!';
+        this.signerAddress = accFive;
         this.signData = await getSignData(this.signerMsg, this.signerAddress);
     });
 
-    it('throws an error of unauthorise singer', async function() {
+    it('throws an error for unauthorise singer', async function() {
       await shouldFail.reverting.withMessage(
         this.signDoc(this.signerAddress, this.signData),
         'Provided address not authorised to sign the document.'
       );
     });
+  });//---end tag authorised signer only ---->
+
+  context('correctly updates whoSigned list with signer address', function() {
+
   });
-  */
+
 
   }); //----end tag signer signing process---->
 });//---END MAIN TAG --->
