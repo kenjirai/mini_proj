@@ -158,10 +158,5 @@ contract('SignTheDoc', function([accOne, accTwo, accThree, accFour, accFive]) {
     });
   });//---end tag authorised signer only ---->
 
-  context('correctly updates whoSigned list with signer address', function() {
-
-  });
-
-
   }); //----end tag signer signing process---->
 });//---END MAIN TAG --->

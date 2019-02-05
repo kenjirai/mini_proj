@@ -1,18 +1,17 @@
 const SignTheDoc = artifacts.require('SignTheDoc');
-const { BN, should } = require('./helper/setup');
-const { eventExist } = require('./helper/getEvents');
-const { assertFailure, internalFailWithMsg } = require('./helper/failureUtils');
-const { advanceBlock, latest, latestBlock, increase, increaseTo, duration } = require('./helper/time');
-const getSignData = require('./helper/getSignData');
-const shouldFail = require('./helper/shouldFail');
-const deployDoc = require('./helper/deployDoc');
+const { BN, should } = require('../helper/setup');
+const { eventExist } = require('../helper/getEvents');
+const { assertFailure, internalFailWithMsg } = require('../helper/failureUtils');
+const { advanceBlock, latest, latestBlock, increase, increaseTo, duration } = require('../helper/time');
+const getSignData = require('../helper/getSignData');
+const shouldFail = require('../helper/shouldFail');
+const deployDoc = require('../helper/deployDoc');
 
 contract('SignTheDoc', function([accOne, accTwo, accThree, accFour]) {
   beforeEach(async function() {
     this.std = await SignTheDoc.new();
     this.msg = 'hello world!'
-    this.signMsg = await web3.eth.sign(this.msg, accOne);
-    this.signData = await getSignData(this.signMsg, accOne);
+    this.signData = await getSignData(this.msg, accOne);
     this.latestBlockTime = await latest();
     this.expiryDate = this.latestBlockTime.add(duration.days(1));
     this.authorisedSignerList = [accTwo, accFour];
