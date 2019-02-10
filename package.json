@@ -20,12 +20,16 @@
   },
   "homepage": "https://github.com/kenjirai/mini_proj#readme",
   "description": "",
-  "dependencies": {},
+  "dependencies": {
+    "web3": "^1.0.0-beta.46"
+  },
   "devDependencies": {
+    "chai": "^4.2.0",
     "chai-bn": "^0.1.1",
     "file-api": "^0.10.4",
     "filereader": "^0.10.3",
     "mime": "^1.6.0",
-    "semver": "^5.6.0"
+    "semver": "^5.6.0",
+    "truffle-hdwallet-provider": "^1.0.3"
   }
 }
