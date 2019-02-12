@@ -21,6 +21,7 @@
   "homepage": "https://github.com/kenjirai/mini_proj#readme",
   "description": "",
   "dependencies": {
+    "js-sha3": "^0.8.0",
     "web3": "^1.0.0-beta.46"
   },
   "devDependencies": {
