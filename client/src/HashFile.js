@@ -27,8 +27,7 @@ class HashFile extends React.Component {
         asyncUpdate();
       } catch(e) {
         self.setState({error:e});
-      }
-    };
+      } };
     var asyncUpdate = function () {
       if (start < total) {
         console.log('hashing...' + (start / total * 100).toFixed(2) + '%');
