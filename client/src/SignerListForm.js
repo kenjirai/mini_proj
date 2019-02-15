@@ -18,25 +18,24 @@ function hasSpace(value){
   }
 }
 
-class SignerListForm extends React.Component {
+class signerListForm extends React.Component {
   state = {
-    signerList: [{address:'', error:''}],
-    anyError:''
+    signerInfo: [{address:'', error:''}],
+    anyError:'',
+    addressList:[]
   }
 
 handleChange = (e) => {
-  let signerList = [...this.state.signerList];
+  let signerInfo = [...this.state.signerInfo];
   const targetId = e.target.dataset.id;
   const className = e.target.className;
   const error = 'error';
   const value = e.target.value;
-  console.log('value', value)
   const validate = this.validateForm(value);
-  console.log('validate', validate);
-  signerList[targetId][error] = validate.errorMsg;
+  signerInfo[targetId][error] = validate.errorMsg;
   this.setState({ anyError:validate.anyError });
-  signerList[targetId][className] = value.trim();
-  this.setState({ signerList });
+  signerInfo[targetId][className] = value.trim();
+  this.setState({ signerInfo });
 }
 
 validateForm(value) {
@@ -51,7 +50,7 @@ validateForm(value) {
     };
   } else if(hasSpace(inputValue)) {
     return {
-      errorMsg:'address should not contain any space',
+      errorMsg:'address should not contain any space character',
       anyError:true
     };
   } else if(value.length !== 42) {
@@ -74,20 +73,26 @@ validateForm(value) {
 
 addAddress = (e) => {
     this.setState((prevState) => ({
-      signerList: [...prevState.signerList, {address:'', error:''}],
+      signerInfo: [...prevState.signerInfo, {address:'', error:''}],
     }));
+  }
+
+deleteAddress = (e) => {
+    let signerInfo = [...this.state.signerInfo];
+    signerInfo.splice(e.target.dataset.id, 1);
+    this.setState({signerInfo: signerInfo});
   }
 
 handleSubmit = (e) => { e.preventDefault() }
 
 render() {
-    const {signerList, anyError} = this.state;
-    console.log('signerList', signerList);
-    console.log('anyError', anyError);
+    const {signerInfo, anyError} = this.state;
+
+    console.log('signerInfo', signerInfo);
     return (
       <form onSubmit={this.handleSubmit} >
         {
-          signerList.map((val, idx)=> {
+          signerInfo.map((val, idx)=> {
             const signerId = `signer-${idx}`;
             return (
               <div key={idx}>
@@ -97,19 +102,20 @@ render() {
                   name={signerId}
                   data-id={idx}
                   id={signerId}
-                  value={signerList[idx].address}
+                  value={signerInfo[idx].address}
                   className="address"
                   onChange={this.handleChange}
                 />
-               <span style={{color: "red"}}>{signerList[idx].error}</span>
+               <span style={{color: "red"}}>{signerInfo[idx].error}</span>
+               <button data-id={idx} id={`btn-` + signerId}  onClick={this.deleteAddress}>Delete</button>
               </div>
             );
           })
         }
-        <button onClick={this.addAddress} disabled={anyError}>Add New Signer</button>
+       <button onClick={this.addAddress} disabled={anyError}>Add New Signer</button>
       </form>
     );
   }
 }
 
-export default SignerListForm;
+export default signerListForm;
