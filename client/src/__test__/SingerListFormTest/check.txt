@@ -1,0 +1,4 @@
+
+//initial state is correctly loaded
+// simulate click and correct values are reflected in the form as well as
+in the state.

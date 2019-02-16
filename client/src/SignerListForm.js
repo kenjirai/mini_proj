@@ -41,7 +41,6 @@ handleChange = (e) => {
 validateForm(value) {
   //remove any first and last space
   const inputValue= value.trim();
-  console.log(inputValue);
   const prefix = inputValue.slice(0,2);
   if( prefix !== "0x") {
     return {
@@ -87,8 +86,6 @@ handleSubmit = (e) => { e.preventDefault() }
 
 render() {
     const {signerInfo, anyError} = this.state;
-
-    console.log('signerInfo', signerInfo);
     return (
       <form onSubmit={this.handleSubmit} >
         {
@@ -107,12 +104,12 @@ render() {
                   onChange={this.handleChange}
                 />
                <span style={{color: "red"}}>{signerInfo[idx].error}</span>
-               <button data-id={idx} id={`btn-` + signerId}  onClick={this.deleteAddress}>Delete</button>
+               <button data-id={idx} id={`btn-` + signerId} className='del-btn' onClick={this.deleteAddress}>Delete</button>
               </div>
             );
           })
         }
-       <button onClick={this.addAddress} disabled={anyError}>Add New Signer</button>
+       <button id="add-new-btn" onClick={this.addAddress} disabled={anyError}>Add New Signer</button>
       </form>
     );
   }

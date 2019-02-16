@@ -1,12 +1,9 @@
 {
-  "name": "client",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3",
-    "react-scripts": "2.1.1",
-    "web3": "^1.0.0-beta.37"
+  "name": "sign-the-doc",
+  "version": "1.0.0",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -14,9 +11,41 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kenjirai/mini_proj.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kenjirai/mini_proj/issues"
+  },
+  "homepage": "https://github.com/kenjirai/mini_proj#readme",
+  "description": "",
+  "dependencies": {
+    "js-sha3": "^0.8.0",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-scripts": "^2.1.5",
+    "web3": "^1.0.0-beta.46"
+  },
   "eslintConfig": {
     "extends": "react-app"
   },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-bn": "^0.1.1",
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.9.1",
+    "file-api": "^0.10.4",
+    "filereader": "^0.10.3",
+    "mime": "^1.6.0",
+    "react-test-renderer": "^16.8.2",
+    "semver": "^5.6.0",
+    "truffle-hdwallet-provider": "^1.0.3"
+  },
+  "private": true,
   "browserslist": [
     ">0.2%",
     "not dead",
