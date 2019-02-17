@@ -2,3 +2,14 @@
 //initial state is correctly loaded
 // simulate click and correct values are reflected in the form as well as
 in the state.
+
+//should trim the front and back space
+//should correctly store multiple address
+//should correctly display multiple address field
+//should display the error message correctly
+
+//test for handle change
+//record multiple address correctly - only done
+
+//handlechange single address
+//handlechange multiple address
