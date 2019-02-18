@@ -5,6 +5,11 @@ exports[`Link changes the class when hovered 1`] = `
   onSubmit={[Function]}
 >
   <div>
+    <p
+      id="done-0"
+    >
+      done
+    </p>
     <label
       htmlFor="signer-0"
     >
@@ -20,6 +25,7 @@ exports[`Link changes the class when hovered 1`] = `
       value=""
     />
     <span
+      id="error-0"
       style={
         Object {
           "color": "red",

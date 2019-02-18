@@ -30,10 +30,4 @@ describe("Initial SingerListForm Component State", function() {
     });
   });
 
-  describe('state anyError', function() {
-    it('should initialize state addressList with empty value', function() {
-      expect(wrapper.state('addressList').length).toEqual(0);
-    });
-  });
-
 });

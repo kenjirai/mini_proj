@@ -18,11 +18,19 @@ function hasSpace(value){
   }
 }
 
+function isAddressUnique(signerInfo, address) {
+  for(let i=0; i < signerInfo.length; i++) {
+    if (signerInfo[i].address === address) {
+      return false;
+    }
+  }
+  return true;
+}
+
 class signerListForm extends React.Component {
   state = {
     signerInfo: [{address:'', error:''}],
-    anyError:'',
-    addressList:[]
+    anyError:''
   }
 
 handleChange = (e) => {
@@ -30,24 +38,24 @@ handleChange = (e) => {
   const targetId = e.target.dataset.id;
   const className = e.target.className;
   const error = 'error';
-  const value = e.target.value;
-  const validate = this.validateForm(value);
+  const address = e.target.value;
+  const validate = this.validateForm(address, signerInfo);
   signerInfo[targetId][error] = validate.errorMsg;
   this.setState({ anyError:validate.anyError });
-  signerInfo[targetId][className] = value.trim();
+  signerInfo[targetId][className] = address.trim();
   this.setState({ signerInfo });
 }
 
-validateForm(value) {
+validateForm(value, state) {
   //remove any first and last space
-  const inputValue= value.trim();
-  const prefix = inputValue.slice(0,2);
+  const signerAddress= value.trim();
+  const prefix = signerAddress.slice(0,2);
   if( prefix !== "0x") {
     return {
       errorMsg:'address must start with 0x prefix.',
       anyError: true
     };
-  } else if(hasSpace(inputValue)) {
+  } else if(hasSpace(signerAddress)) {
     return {
       errorMsg:'address should not contain any space character',
       anyError:true
@@ -57,11 +65,23 @@ validateForm(value) {
       errorMsg:'address length should be 42 including 0x prefix at the front',
       anyError:true
     };
-  } else if(!isAddressValid(inputValue)) {
+  } else if(!isAddressValid(signerAddress)) {
     return {
       errorMsg:'address should be in correct hex format',
       anyError:true
     };
+  } else if(state.length > 1) {
+      if(!isAddressUnique(state, signerAddress)) {
+        return {
+          errorMsg:`duplicate address ${signerAddress} already exist`,
+          anyError:true
+        };
+      } else {
+        return {
+          errorMsg:'',
+          anyError:false
+        };
+      }
   } else {
     return {
       errorMsg:'',
@@ -93,6 +113,7 @@ render() {
             const signerId = `signer-${idx}`;
             return (
               <div key={idx}>
+              <p id={`done-${idx}`}>done</p>
                 <label htmlFor={signerId}>{`signer #${idx + 1}`}</label>
                 <input
                   type="text"
@@ -103,8 +124,8 @@ render() {
                   className="address"
                   onChange={this.handleChange}
                 />
-               <span style={{color: "red"}}>{signerInfo[idx].error}</span>
-               <button data-id={idx} id={`btn-` + signerId} className='del-btn' onClick={this.deleteAddress}>Delete</button>
+               <span id={`error-${idx}`}style={{color: "red"}}>{signerInfo[idx].error}</span>
+               <button data-id={idx} id={`btn-${signerId}`} className='del-btn' onClick={this.deleteAddress}>Delete</button>
               </div>
             );
           })

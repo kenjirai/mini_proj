@@ -13,3 +13,7 @@ in the state.
 
 //handlechange single address
 //handlechange multiple address
+
+//error and error msg check
+
+//Address entry should be unique

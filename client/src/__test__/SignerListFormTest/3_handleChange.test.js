@@ -38,10 +38,6 @@ describe("Add New Signer Address", function() {
       it('should not update state anyError for correct address', function() {
         expect(wrapper.state('anyError')).toEqual(false);
       });
-
-      it('should not update state addressList', function() {
-        expect(wrapper.state('addressList').length).toEqual(0);
-      });
     }); //---end tag update state with single address---//
 
 
@@ -63,4 +59,4 @@ describe("Add New Signer Address", function() {
       });
     }); //---end tag update state with multiple address---//
   });//---end tag handleChange--//
-});
+});//---end tag MAIN---//
