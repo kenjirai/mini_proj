@@ -57,23 +57,23 @@ validateForm(value, state) {
     };
   } else if(hasSpace(signerAddress)) {
     return {
-      errorMsg:'address should not contain any space character',
+      errorMsg:'address should not contain any space character.',
       anyError:true
     };
   } else if(value.length !== 42) {
     return {
-      errorMsg:'address length should be 42 including 0x prefix at the front',
+      errorMsg:'address length should be 42 including 0x prefix at the front.',
       anyError:true
     };
   } else if(!isAddressValid(signerAddress)) {
     return {
-      errorMsg:'address should be in correct hex format',
+      errorMsg:'address should be in correct hex format.',
       anyError:true
     };
   } else if(state.length > 1) {
       if(!isAddressUnique(state, signerAddress)) {
         return {
-          errorMsg:`duplicate address ${signerAddress} already exist`,
+          errorMsg:`duplicate address ${signerAddress} already exist.`,
           anyError:true
         };
       } else {
