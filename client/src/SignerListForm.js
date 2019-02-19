@@ -113,7 +113,6 @@ render() {
             const signerId = `signer-${idx}`;
             return (
               <div key={idx}>
-              <p id={`done-${idx}`}>done</p>
                 <label htmlFor={signerId}>{`signer #${idx + 1}`}</label>
                 <input
                   type="text"

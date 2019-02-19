@@ -46,6 +46,10 @@ describe('Address Validation', function() {
     it('should display error message for if address already exist', function() {
       expect(wrapper.find('#error-0').text()).toEqual(errMsg);
     });
+
+    it('should disable Add New Signer button', function() {
+      expect(wrapper.find('#add-new-btn').props()["disabled"]).toBe(true)
+    });
   }); //---end tag has 0x prefix--//
 
 
@@ -76,6 +80,10 @@ describe('Address Validation', function() {
 
     it('should display error message for if address already exist', function() {
       expect(wrapper.find('#error-0').text()).toEqual(errMsg);
+    });
+
+    it('should disable Add New Signer button', function() {
+      expect(wrapper.find('#add-new-btn').props()["disabled"]).toBe(true)
     });
   }); //---end tag has space---//
 
@@ -108,6 +116,10 @@ describe('Address Validation', function() {
     it('should display error message for if address already exist', function() {
       expect(wrapper.find('#error-0').text()).toEqual(errMsg);
     });
+
+    it('should disable Add New Signer button', function() {
+      expect(wrapper.find('#add-new-btn').props()["disabled"]).toBe(true)
+    });
   }); //---end tag correct length---//
 
 
@@ -138,6 +150,10 @@ describe('Address Validation', function() {
 
     it('should display error message for if address already exist', function() {
       expect(wrapper.find('#error-0').text()).toEqual(errMsg);
+    });
+
+    it('should disable Add New Signer button', function() {
+      expect(wrapper.find('#add-new-btn').props()["disabled"]).toBe(true)
     });
   }); //---end tag incorrect hex format---//
 
@@ -180,6 +196,10 @@ describe('Address Validation', function() {
 
     it('should display error message for if address already exist', function() {
       expect(wrapper.find('#error-1').text()).toEqual(errMsg);
+    });
+
+    it('should disable Add New Signer button', function() {
+      expect(wrapper.find('#add-new-btn').props()["disabled"]).toBe(true)
     });
   }); //---end tag unique address ---//
 }); // ---end tag main tag ---//

@@ -55,8 +55,23 @@ describe("Add New Signer Address", function() {
       });
 
       it('should update state singerInfo[address] with correct address', function() {
-        expect(wrapper.state('signerInfo')[0].address).toEqual(accounts[0]);
+        for(let i=0; i < accounts.length; i++) {
+          expect(wrapper.state('signerInfo')[i].address).toEqual(accounts[i]);
+        }
       });
+
+      it('should not update state singerInfo[error] for correct address', function() {
+        for(let i=0; i < accounts.length; i++) {
+          expect(wrapper.state('signerInfo')[0].error.length).toEqual(0);
+        }
+      });
+
+      it('should not update state anyError for correct address', function() {
+        for(let i=0; i < accounts.length; i++) {
+          expect(wrapper.state('anyError')).toEqual(false);
+        }
+      });
+
     }); //---end tag update state with multiple address---//
   });//---end tag handleChange--//
 });//---end tag MAIN---//

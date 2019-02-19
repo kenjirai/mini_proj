@@ -29,11 +29,11 @@ describe("Address Form Field With Buttons", function() {
       expect(wrapper.find('button[className="del-btn"]').length).toBe(1);
     });
 
-    it('should have data-id set to 0', () => {
+    it('should have delete button data-id set to 0', () => {
       expect(wrapper.find('button[data-id=0]').length).toBe(1);
     });
 
-    it('should have correct id', () => {
+    it('should have correct delete button id', () => {
       expect(wrapper.find('button[id="btn-signer-0"]').length).toBe(1);
     });
   });
