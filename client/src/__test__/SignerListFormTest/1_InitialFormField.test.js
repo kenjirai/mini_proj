@@ -8,6 +8,7 @@ describe("Address Form Field With Buttons", function() {
 
   beforeEach(() => {
     wrapper = shallow(<SignerListForm />);
+    wrapper.find(`#add-new-btn`).simulate('click');
   });
 
   describe('input field with property', function() {

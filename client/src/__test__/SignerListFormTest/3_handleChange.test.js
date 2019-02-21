@@ -23,6 +23,7 @@ describe("Add New Signer Address", function() {
           dataset: {id:0},
           className:"address"
         }
+        wrapper.find(`#add-new-btn`).simulate('click');
         wrapper.find('input').simulate('change', {target: mockInput});
         expect(wrapper.state('signerInfo').length).toEqual(1);
       });
@@ -49,6 +50,7 @@ describe("Add New Signer Address", function() {
             dataset: {id:i},
             className:"address"
           }
+          wrapper.find(`#add-new-btn`).simulate('click');
           wrapper.find(`input[data-id=${i}]`).simulate('change', {target: mockInput});
           wrapper.find(`#add-new-btn`).simulate('click');
         }

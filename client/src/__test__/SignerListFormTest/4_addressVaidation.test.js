@@ -30,6 +30,7 @@ describe('Address Validation', function() {
         },
         className: "address"
       }
+      wrapper.find(`#add-new-btn`).simulate('click');
       wrapper.find(`input[data-id=${firstInputId}]`).simulate('change', {
         target: mockInput
       });
@@ -65,6 +66,7 @@ describe('Address Validation', function() {
         },
         className: "address"
       }
+      wrapper.find(`#add-new-btn`).simulate('click');
       wrapper.find(`input[data-id=${firstInputId}]`).simulate('change', {
         target: mockInput
       });
@@ -100,6 +102,7 @@ describe('Address Validation', function() {
         },
         className: "address"
       }
+      wrapper.find(`#add-new-btn`).simulate('click');
       wrapper.find(`input[data-id=${firstInputId}]`).simulate('change', {
         target: mockInput
       });
@@ -135,6 +138,7 @@ describe('Address Validation', function() {
         },
         className: "address"
       }
+      wrapper.find(`#add-new-btn`).simulate('click');
       wrapper.find(`input[data-id=${firstInputId}]`).simulate('change', {
         target: mockInput
       });
@@ -169,6 +173,7 @@ describe('Address Validation', function() {
         },
         className: "address"
       }
+      wrapper.find(`#add-new-btn`).simulate('click');
       wrapper.find(`input[data-id=${firstInputId}]`).simulate('change', {
         target: firstMockInput
       });

@@ -8,11 +8,12 @@ describe("Initial SingerListForm Component State", function() {
 
   beforeEach(() => {
     wrapper = mount(<SignerListForm  />);
+    wrapper.find(`#add-new-btn`).simulate('click');
   });
 
   describe('State SignerInfo Array', function() {
     it('intial state singerInfo array should be length of 1', function() {
-      expect(wrapper.state('signerInfo').length).toEqual(1);
+      expect(wrapper.state('signerInfo').length).toEqual(0);
     });
 
     it('should initialize state address with empty value', function() {

@@ -2,56 +2,19 @@
 
 exports[`Link changes the class when hovered 1`] = `
 <div>
-  <form
-    onSubmit={[Function]}
+  <form />
+  <button
+    disabled=""
+    id="add-new-btn"
+    onClick={[Function]}
   >
-    <div>
-      <label
-        htmlFor="signer-0"
-      >
-        signer #1
-      </label>
-      <input
-        className="address"
-        data-id={0}
-        id="signer-0"
-        name="signer-0"
-        onChange={[Function]}
-        type="text"
-        value=""
-      />
-      <span
-        id="error-0"
-        style={
-          Object {
-            "color": "red",
-          }
-        }
-      >
-        
-      </span>
-      <button
-        className="del-btn"
-        data-id={0}
-        id="btn-signer-0"
-        onClick={[Function]}
-      >
-        Delete
-      </button>
-    </div>
-    <button
-      disabled=""
-      id="add-new-btn"
-      onClick={[Function]}
-    >
-      Add New Signer
-    </button>
-    <button
-      id="open-for-all"
-      onClick={[Function]}
-    >
-       Anyone can sign
-    </button>
-  </form>
+    Add New Signer
+  </button>
+  <button
+    id="open-for-all"
+    onClick={[Function]}
+  >
+     Anyone can sign
+  </button>
 </div>
 `;

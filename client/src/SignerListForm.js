@@ -30,9 +30,12 @@ function isAddressUnique(signerInfo, address) {
 
 class signerListForm extends React.Component {
   state = {
-    signerInfo: [{address:'', error:''}],
+    signerInfo: [],
     anyError:'',
-    open:false
+    open: {
+      bool:false,
+      msg:"Only authorised Signer can sign the document"
+    }
   }
 
 handleChange = (e) => {
@@ -93,8 +96,16 @@ validateForm(value, state) {
 }
 
 addAddress = (e) => {
+    let open = {...this.state.open}
+    if(open.bool) {
+      open.bool = false
+      this.setState({
+        open:open
+      });
+    }
+
     this.setState((prevState) => ({
-      signerInfo: [...prevState.signerInfo, {address:'', error:''}],
+      signerInfo: [...prevState.signerInfo, {address:'', error:''}]
     }));
   }
 
@@ -105,30 +116,31 @@ deleteAddress = (e) => {
   }
 
 openForAll = () => {
+  let state = this.state
+  state.signerInfo = [];
+  state.anyError='';
+  state.open.bool=true;
+  state.open.msg = 'Anyone can sign the document';
   this.setState({
-   signerInfo:[],
-   anyError:'',
-   open:true
+   state
   });
 }
 
 userConsent = () => {
-  if(this.state.signerInfo[0].address) {
+  if(this.state.signerInfo[0] && this.state.signerInfo[0].address && !this.state.open.bool) {
     if (window.confirm('Warning: All entered address will be reset')) {
       this.openForAll();
     }
-  }else {
+  }else if(!this.state.open.bool){
       this.openForAll();
   }
 }
-
-handleSubmit = (e) => { e.preventDefault() }
 
 render() {
     const {signerInfo, anyError} = this.state;
     return (
       <div>
-      <form onSubmit={this.handleSubmit} >
+      <form >
         {
           signerInfo.map((val, idx)=> {
             const signerId = `signer-${idx}`;
@@ -150,9 +162,9 @@ render() {
             );
           })
         }
-       <button id="add-new-btn" onClick={this.addAddress} disabled={anyError}>Add New Signer</button>
-       <button id="open-for-all" onClick={this.userConsent}> Anyone can sign</button>
       </form>
+      <button id="add-new-btn" onClick={this.addAddress} disabled={anyError}>Add New Signer</button>
+      <button id="open-for-all" onClick={this.userConsent}> Anyone can sign</button>
       </div>
     );
   }
