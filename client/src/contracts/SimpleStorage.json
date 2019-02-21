@@ -558,10 +558,16 @@
       "links": {},
       "address": "0x7dC8A0F32CE021F70592D8CfbB62031B7D2EE200",
       "transactionHash": "0x522cdf0860214a75481dc2068e1d3b53dbf23f38e321218cdffddecaa03c454c"
+    },
+    "1550654537522": {
+      "events": {},
+      "links": {},
+      "address": "0x210FB4e1771ede16D9bfD726f73F51DD63468Be0",
+      "transactionHash": "0x972513e010b393f4e29e541f49092838e3fc792a22fea9a85564c7ce46a067de"
     }
   },
   "schemaVersion": "3.0.1",
-  "updatedAt": "2019-02-10T12:30:31.526Z",
+  "updatedAt": "2019-02-20T09:22:59.470Z",
   "devdoc": {
     "methods": {}
   },

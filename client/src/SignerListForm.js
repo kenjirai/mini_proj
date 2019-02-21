@@ -1,4 +1,5 @@
 import React from "react";
+import SignHash from './SignHash';
 
 function isAddressValid(address) {
   const myRe = /^0x[a-fA-F0-9]{40}$/;
@@ -30,7 +31,8 @@ function isAddressUnique(signerInfo, address) {
 class signerListForm extends React.Component {
   state = {
     signerInfo: [{address:'', error:''}],
-    anyError:''
+    anyError:'',
+    open:false
   }
 
 handleChange = (e) => {
@@ -102,11 +104,30 @@ deleteAddress = (e) => {
     this.setState({signerInfo: signerInfo});
   }
 
+openForAll = () => {
+  this.setState({
+   signerInfo:[],
+   anyError:'',
+   open:true
+  });
+}
+
+userConsent = () => {
+  if(this.state.signerInfo[0].address) {
+    if (window.confirm('Warning: All entered address will be reset')) {
+      this.openForAll();
+    }
+  }else {
+      this.openForAll();
+  }
+}
+
 handleSubmit = (e) => { e.preventDefault() }
 
 render() {
     const {signerInfo, anyError} = this.state;
     return (
+      <div>
       <form onSubmit={this.handleSubmit} >
         {
           signerInfo.map((val, idx)=> {
@@ -130,7 +151,9 @@ render() {
           })
         }
        <button id="add-new-btn" onClick={this.addAddress} disabled={anyError}>Add New Signer</button>
+       <button id="open-for-all" onClick={this.userConsent}> Anyone can sign</button>
       </form>
+      </div>
     );
   }
 }
