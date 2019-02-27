@@ -1,17 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import './index.css';
-//import App from './App';
-//import HashFile from './HashFile';
-//import SignHash from './SignHash';
-import SignerListForm from './SignerListForm';
-//import LoadWeb3 from './LoadWeb3';
+import LoadWeb3 from './LoadWeb3';
+import HashFile from './HashFile';
+import ExpiryDate from './ExpiryDate';
+import CheckBox from './CheckBox';
+import CheckState from './CheckState';
 
 import * as serviceWorker from './serviceWorker';
-
+//
 ReactDOM.render(
   <div>
-  <SignerListForm />
+    <CheckBox first="first" second="second"/>
   </div>,
   document.getElementById('root')
 );

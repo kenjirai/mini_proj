@@ -31,10 +31,14 @@ function isAddressUnique(signerInfo, address) {
 class signerListForm extends React.Component {
   state = {
     signerInfo: [],
-    anyError:'',
+    anyError:null,
     open: {
       bool:false,
       msg:"Only authorised Signer can sign the document"
+    },
+    authSignBtn: {
+      text:'Only Authorised Signer',
+      click: false
     }
   }
 
@@ -95,24 +99,44 @@ validateForm(value, state) {
   }
 }
 
-addAddress = (e) => {
-    let open = {...this.state.open}
-    if(open.bool) {
-      open.bool = false
-      this.setState({
-        open:open
-      });
-    }
 
+addAddress = (e) => {
+    this.buttonManage();
     this.setState((prevState) => ({
       signerInfo: [...prevState.signerInfo, {address:'', error:''}]
     }));
   }
 
+buttonManage() {
+  let open = {...this.state.open};
+  let authSignBtn = {...this.state.authSignBtn.click};
+
+  if(open.bool) {
+    open.bool = false
+    this.setState({
+      open:open
+    });
+  }
+
+  if(!authSignBtn.click) {
+    authSignBtn.click = true;
+    authSignBtn.text="Add New Signer";
+    this.setState({
+      authSignBtn:authSignBtn
+    });
+  }
+
+  if(authSignBtn.click && authSignBtn.text==="Add New Signer") {
+    this.setState({
+      anyError:true
+    })
+  }
+}
+
 deleteAddress = (e) => {
-    let signerInfo = [...this.state.signerInfo];
-    signerInfo.splice(e.target.dataset.id, 1);
-    this.setState({signerInfo: signerInfo});
+  let signerInfo = [...this.state.signerInfo];
+  signerInfo.splice(e.target.dataset.id, 1);
+  this.setState({ signerInfo });
   }
 
 openForAll = () => {
@@ -121,9 +145,9 @@ openForAll = () => {
   state.anyError='';
   state.open.bool=true;
   state.open.msg = 'Anyone can sign the document';
-  this.setState({
-   state
-  });
+  state.authSignBtn.click = false;
+  state.authSignBtn.text = "Only Authorised Signers"
+  this.setState({ state });
 }
 
 userConsent = () => {
@@ -136,35 +160,48 @@ userConsent = () => {
   }
 }
 
+handleSubmit = (e) => {
+   e.preventDefault();
+ }
+
+
 render() {
     const {signerInfo, anyError} = this.state;
+    const signerInfoLen = signerInfo.length > 0 ? true : false;
     return (
       <div>
-      <form >
-        {
-          signerInfo.map((val, idx)=> {
-            const signerId = `signer-${idx}`;
-            return (
-              <div key={idx}>
-                <label htmlFor={signerId}>{`signer #${idx + 1}`}</label>
-                <input
-                  type="text"
-                  name={signerId}
-                  data-id={idx}
-                  id={signerId}
-                  value={signerInfo[idx].address}
-                  className="address"
-                  onChange={this.handleChange}
-                />
-               <span id={`error-${idx}`}style={{color: "red"}}>{signerInfo[idx].error}</span>
-               <button data-id={idx} id={`btn-${signerId}`} className='del-btn' onClick={this.deleteAddress}>Delete</button>
-              </div>
-            );
-          })
-        }
-      </form>
-      <button id="add-new-btn" onClick={this.addAddress} disabled={anyError}>Add New Signer</button>
-      <button id="open-for-all" onClick={this.userConsent}> Anyone can sign</button>
+      <section>
+        <h2>Step2: Who can sign the document?</h2>
+        <form onSubmit={this.handleSubmit}>
+          {
+            signerInfo.map((val, idx)=> {
+              const signerId = `signer-${idx}`;
+              return (
+                <div key={idx}>
+                  <label htmlFor={signerId}>{`signer #${idx + 1}`}</label>
+                  <input
+                    type="text"
+                    name={signerId}
+                    data-id={idx}
+                    id={signerId}
+                    value={signerInfo[idx].address}
+                    className="address"
+                    onChange={this.handleChange}
+                  />
+                 <span id={`error-${idx}`}style={{color: "red"}}>{signerInfo[idx].error}</span>
+
+                 {this.state.signerInfo.length > 1 ? <button data-id={idx} id={`btn-${signerId}`} className='del-btn' onClick={this.deleteAddress} >Delete</button>: null}
+
+                </div>
+              );
+            })
+          }
+        </form>
+        <button id="add-new-btn" onClick={this.addAddress} disabled={anyError}>{this.state.authSignBtn.text}</button>
+        <button id="open-for-all" onClick={this.userConsent}> Anyone can sign</button>
+      </section>
+      {signerInfoLen > 0 ? this.state.signerInfo[0].address: 'empty'}
+      <SignHash hashOutput={this.props.hashOutput} signerData ={signerInfoLen > 0 ? this.state.signerInfo: null}/>
       </div>
     );
   }

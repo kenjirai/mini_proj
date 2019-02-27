@@ -1,5 +1,7 @@
 import React from "react";
 import { keccak256 } from 'js-sha3';
+import SignerListForm from './SignerListForm';
+import SignHash from './SignHash';
 
 const initialState = {
   hashOutput: '',
@@ -51,27 +53,28 @@ class HashFile extends React.Component {
         } else {
           self.setState({
             hashOutput: '0x' + current.hex()
-          }, () => self.passPropToParent());
+          });
         }
       };
       asyncUpdate();
     }
 
-  passPropToParent() {
-    this.props.hashResult('hashResult', this.state.hashOutput)
-  }
-
   render() {
     return (
       <div>
+        <section>
+          <h2> Step1: Hash the File </h2>
       <form>
         <label>
          Select a File:
           <input type="file" onChange={this.handleChange} />
         </label>
+          <span id="hash-output">Hash Output:{this.state.hashOutput ? this.state.hashOutput:'Choose file to begain'}</span>
       </form>
-      <span id="hash-output">Hash Output:{this.state.hashOutput ? this.state.hashOutput:'Choose file to begain'}</span>
+      </section>
+      <SignerListForm hashOutput={this.state.hashOutput}/>
     </div>
+
     );
   }
 }
