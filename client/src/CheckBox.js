@@ -35,6 +35,7 @@ class CheckBox extends React.Component {
     }
 
     handleInputChange(event) {
+
       const name = event.target.name;
 
       var state = {
@@ -65,24 +66,32 @@ class CheckBox extends React.Component {
         });
       }
     }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(JSON.stringify(prevState.checkBox) !== JSON.stringify(this.state.checkBox)) {
+      this.props.checkBoxCallback(this.state.checkBox)
+    }
+  }
   render() {
+    const first =  this.props.first.toLowerCase();
+    const second = this.props.second.toLowerCase();
     return (
       <form>
         <label>
-          Yes:
+          {this.props.first}
           <input
-            name={this.props.first}
+            name={first}
             type="checkbox"
-            checked={this.state.checkBox[this.props.first] === undefined ? false : this.state.checkBox[this.props.first]}
+            checked={this.state.checkBox[first] === undefined ? false : this.state.checkBox[first]}
             onChange={this.handleInputChange} />
         </label>
         <br/>
         <label>
-          No:
+          {this.props.second}
           <input
-            name={this.props.second}
+            name={second}
             type="checkbox"
-            checked={this.state.checkBox[this.props.second] === undefined ? false : this.state.checkBox[this.props.second]}
+            checked={this.state.checkBox[second] === undefined ? false : this.state.checkBox[second]}
             onChange={this.handleInputChange} />
         </label>
         <br />

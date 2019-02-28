@@ -5,12 +5,13 @@ import HashFile from './HashFile';
 import ExpiryDate from './ExpiryDate';
 import CheckBox from './CheckBox';
 import CheckState from './CheckState';
+import Play from './Play';
 
 import * as serviceWorker from './serviceWorker';
-//
+//<CheckBox first="first" second="second"/>
 ReactDOM.render(
   <div>
-    <CheckBox first="first" second="second"/>
+    <HashFile/>
   </div>,
   document.getElementById('root')
 );

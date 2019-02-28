@@ -1,4 +1,6 @@
 import React from 'react';
+import CheckBox from './CheckBox';
+import Pass from './Pass';
 
 class Play extends React.Component {
   constructor(props) {
@@ -8,15 +10,18 @@ class Play extends React.Component {
     };
   }
 
+  handleCallback = (data) => {
+    console.log("data", data);
+  }
+
   render() {
     console.log(this.state.data)
     return(
       <div>
-        <p> inside render</p>
-        {this.state.data}
+        <CheckBox first='first' second='second' checkBoxCallback={this.handleCallback}/>
       </div>
-    )
+    );
   }
 }
-
+//<Pass passCallback={this.handleCallback}/>
 export default Play;

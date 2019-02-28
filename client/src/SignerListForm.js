@@ -1,5 +1,6 @@
 import React from "react";
 import SignHash from './SignHash';
+import ExpiryDate from './ExpiryDate';
 
 function isAddressValid(address) {
   const myRe = /^0x[a-fA-F0-9]{40}$/;
@@ -189,9 +190,7 @@ render() {
                     onChange={this.handleChange}
                   />
                  <span id={`error-${idx}`}style={{color: "red"}}>{signerInfo[idx].error}</span>
-
                  {this.state.signerInfo.length > 1 ? <button data-id={idx} id={`btn-${signerId}`} className='del-btn' onClick={this.deleteAddress} >Delete</button>: null}
-
                 </div>
               );
             })
@@ -200,11 +199,12 @@ render() {
         <button id="add-new-btn" onClick={this.addAddress} disabled={anyError}>{this.state.authSignBtn.text}</button>
         <button id="open-for-all" onClick={this.userConsent}> Anyone can sign</button>
       </section>
-      {signerInfoLen > 0 ? this.state.signerInfo[0].address: 'empty'}
-      <SignHash hashOutput={this.props.hashOutput} signerData ={signerInfoLen > 0 ? this.state.signerInfo: null}/>
+
+      <ExpiryDate />
       </div>
     );
   }
 }
+//      <SignHash hashOutput={this.props.hashOutput} signerData ={signerInfoLen > 0 ? this.state.signerInfo: null}/>
 
 export default signerListForm;

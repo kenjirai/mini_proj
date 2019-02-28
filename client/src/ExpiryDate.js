@@ -1,4 +1,5 @@
 import React from "react";
+import CheckBox from './CheckBox';
 import DatePicker from "react-datepicker";
 import setMinutes from "date-fns/setMinutes";
 import setHours from "date-fns/setHours";
@@ -13,7 +14,8 @@ export default class ExpiryDate extends React.Component {
     super(props);
     this.state = {
       startDate: new Date(),
-      unixDate:null
+      unixDate:null,
+      callbackChkBx:null
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -26,24 +28,33 @@ export default class ExpiryDate extends React.Component {
     });
   }
 
+  handleCallback = (data) => {
+    console.log('gotCallback', data);
+    this.setState({
+      callbackChkBx: data
+    })
+  }
+
   render() {
+    let datePicker = <DatePicker
+    selected={this.state.startDate}
+    onChange={this.handleChange}
+    showTimeSelect
+    timeFormat="h:mm"
+    timeIntervals={15}
+    dateFormat="d/MM/yyyy h:mm aa"
+    minDate={new Date()}
+    timeCaption="time"
+    />
+
     return (
       <section>
       <h2> Step3: Expiry Date </h2>
+      <CheckBox first='Yes' second='No' checkBoxCallback={this.handleCallback}/>
       <div>
-        <DatePicker
-        selected={this.state.startDate}
-        onChange={this.handleChange}
-        showTimeSelect
-        timeFormat="h:mm"
-        timeIntervals={15}
-        dateFormat="d/MM/yyyy h:mm aa"
-        minDate={new Date()}
-        timeCaption="time"
-        />
+
       </div>
       </section>
-
     );
   }
 }
