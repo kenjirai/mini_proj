@@ -39,7 +39,7 @@ class signerListForm extends React.Component {
     openSig:true,
     checkBox: {
       name: {
-        first:"Authorised singer only",
+        first:"Authorised signer only",
         second:"Anyone can sign"
       },
       callbackData:null
@@ -112,11 +112,44 @@ addAddress = (e) => {
 deleteAddress = (e) => {
   let signerInfo = [...this.state.signerInfo];
   signerInfo.splice(e.target.dataset.id, 1);
-  this.setState({ signerInfo });
-  }
 
+  //Let anyone sign the document if all address is deleted.
+  if(signerInfo.length == 0) {
+    let checkBox = { ...this.state.checkBox };
+
+    //CheckBox Component lower case the passed props before updating state.
+    // It is store as key inside state object.
+    let firstCheckBox  = checkBox.name.first.toLowerCase();
+    let secondCheckBox = checkBox.name.second.toLowerCase();
+
+    //Restore to default checkBox settings.
+    //CheckBox Label: "Authorised signer only" will set to false.
+    //CheckBox Label: "Anyone can sign" will set to false.
+    checkBox.callbackData[firstCheckBox] = false;
+    checkBox.callbackData[secondCheckBox] = true;
+
+    //Let anyone sign the document.
+    //Setting state openSig to true will hide the Add New Signer button.
+    let openSig = true;
+
+    //Also Disable Add New Signer button.
+    let anyError = true;
+    this.setState({
+      signerInfo:signerInfo,
+      openSig:openSig,
+      checkBox: checkBox,
+      anyError: anyError
+    });
+  } else {
+    this.setState({
+      signerInfo: signerInfo
+    });
+  }
+}
+
+//Let any one sign the document.
+//State openSig boolean value is use to hide/show Add New Signer button.
 openForAll = () => {
-  console.log('inside open for all');
   let signerInfo = [];
   this.setState({
     signerInfo: signerInfo,
@@ -124,6 +157,8 @@ openForAll = () => {
   });
 }
 
+//Ask for user permission to remove the provided address from the list before
+//letting anyone to sign the document.
 userConsent = () => {
   if(this.state.signerInfo[0] && this.state.signerInfo[0].address) {
     if (window.confirm('Warning: All entered address will be reset')) {
@@ -134,26 +169,34 @@ userConsent = () => {
   }
 }
 
+//Receive callback data from child Component CheckBox.
 handleCallback = (data) => {
     let checkBox = {...this.state.checkBox };
     checkBox.callbackData = data;
     this.setState({
       checkBox:checkBox
-    }, () => this.initList());
+    }, () => this.checkBoxLogic());
   }
 
-  initList = () => {
-    let singerInfo = this.state.signerInfo;
-    let firstCheckBox = this.state.checkBox.name.first;
-    let secondCheckBox = this.state.checkBox.name.second;
-    let data = {...this.state.checkBox.callbackData };
+  checkBoxLogic = () => {
+    const state = this.state;
+    const singerInfo = state.signerInfo;
+    const firstCheckBox = state.checkBox.name.first;
+    const secondCheckBox = state.checkBox.name.second;
+    const data = {...state.checkBox.callbackData };
 
-    //CheckBox component lower case the pass props and before updating state.
+    //Enable Add New Signer button.
+    const anyError = false;
+    //Show Add New Signer button.
+    const openSig = false;
+
+    //Render the first signer List form.
+    //CheckBox Component lower case the passed props before updating state.
     if(data[firstCheckBox.toLowerCase()] && singerInfo.length == 0) {
       this.setState((prevState) => ({
         signerInfo: [...prevState.signerInfo, {address:'', error:''}],
-        anyError:false,
-        openSig:false
+        anyError:anyError,
+        openSig:openSig
       }));
     } else if(data[secondCheckBox.toLowerCase()]){
       this.userConsent();
@@ -165,9 +208,9 @@ handleSubmit = (e) => {
  }
 
 render() {
-    const {signerInfo, anyError, openSig} = this.state;
-    const firstCheckBox = this.state.checkBox.name.first;
-    const secondCheckBox = this.state.checkBox.name.second;
+    const {signerInfo, anyError, openSig, checkBox} = this.state;
+    const firstCheckBox = checkBox.name.first;
+    const secondCheckBox = checkBox.name.second;
 
     let addNewBtn;
 
@@ -197,7 +240,11 @@ render() {
                     onChange={this.handleChange}
                   />
                  <span id={`error-${idx}`}style={{color: "red"}}>{signerInfo[idx].error}</span>
-                 {this.state.signerInfo.length > 1 ? <button data-id={idx} id={`btn-${signerId}`} className='del-btn' onClick={this.deleteAddress} >Delete</button>: null}
+                 {this.state.signerInfo.length >= 0 ? (
+                     <button data-id={idx} id={`btn-${signerId}`} className='del-btn' onClick={this.deleteAddress} >Delete</button>
+                   ): (
+                     null
+                   )}
                 </div>
               );
             })
@@ -211,8 +258,5 @@ render() {
     );
   }
 }
-
-//<button id="add-new-btn" onClick={this.addAddress} disabled={anyError}>{this.state.authSignBtn.text}</button>
-//<button id="open-for-all" onClick={this.userConsent}> Anyone can sign</button>
 
 export default signerListForm;
