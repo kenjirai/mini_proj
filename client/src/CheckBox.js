@@ -35,7 +35,6 @@ class CheckBox extends React.Component {
     }
 
     handleInputChange(event) {
-
       const name = event.target.name;
 
       var state = {
