@@ -3,33 +3,6 @@ import SignHash from './SignHash';
 import ExpiryDate from './ExpiryDate';
 import CheckBox from './CheckBox';
 
-function isAddressValid(address) {
-  const myRe = /^0x[a-fA-F0-9]{40}$/;
-  if(myRe.test(address)) {
-      return true;
-  } else {
-      return false;
-  }
-}
-
-function hasSpace(value){
-  const myRe = /\s/g;
-  if(myRe.test(value)) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function isAddressUnique(signerInfo, address) {
-  for(let i=0; i < signerInfo.length; i++) {
-    if (signerInfo[i].address === address) {
-      return false;
-    }
-  }
-  return true;
-}
-
 class signerListForm extends React.Component {
   state = {
     signerInfo: [],
@@ -49,14 +22,18 @@ class signerListForm extends React.Component {
 handleChange = (e) => {
   let signerInfo = [...this.state.signerInfo];
   const targetId = e.target.dataset.id;
+  //form className is 'address'
   const className = e.target.className;
   const error = 'error';
   const address = e.target.value;
   const validate = this.validateForm(address, signerInfo);
-  signerInfo[targetId][error] = validate.errorMsg;
-  this.setState({ anyError:validate.anyError });
   signerInfo[targetId][className] = address.trim();
-  this.setState({ signerInfo });
+  signerInfo[targetId][error] = validate.errorMsg;
+
+  this.setState({
+    signerInfo:signerInfo,
+    anyError:validate.anyError
+    });
 }
 
 validateForm(value, state) {
