@@ -104,7 +104,7 @@ class SignHash extends React.Component {
 
             const expiryDate = this.props.expiryDate;
             console.log('expiryDate', expiryDate)
-            this.setState({ hashOutput, signerList, signData, error, expiryDate },
+            this.setState({ hashOutput, signerList, signData, error, expiryDate, account },
             () => this.deploy());
         }
       }
@@ -152,6 +152,10 @@ class SignHash extends React.Component {
         signData.s,
         signData.v
       ).send({ from: account});
+
+      const response = await contract.methods.getDocData(hashOutput).call();
+      cl('response', response);
+
     }
 
     handleSubmit = (e) => {
