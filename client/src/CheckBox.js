@@ -9,10 +9,8 @@ function isEmpty(obj) {
 }
 
 function hasKey(obj, key) {
-  for (var prop in obj) {
     if (obj.hasOwnProperty(key))
       return true;
-  }
   return false;
 }
 

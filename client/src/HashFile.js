@@ -1,7 +1,6 @@
 import React from "react";
 import { keccak256 } from 'js-sha3';
 import SignerListForm from './SignerListForm';
-import SignHash from './SignHash';
 
 const initialState = {
   hashOutput: '',
@@ -74,7 +73,6 @@ class HashFile extends React.Component {
       </section>
       <SignerListForm hashOutput={this.state.hashOutput}/>
     </div>
-
     );
   }
 }

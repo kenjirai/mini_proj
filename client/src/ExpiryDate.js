@@ -64,8 +64,6 @@ export default class ExpiryDate extends React.Component {
     } else {
       datePicker = null;
     }
-    const lowerFirst = first.toLowerCase();
-    const lowerSecond = second.toLowerCase();
     return (
       <div>
       <section>
@@ -73,10 +71,8 @@ export default class ExpiryDate extends React.Component {
       <CheckBox first={first} second={second} checkBoxCallback={this.handleCallback}/>
       </section>
       {datePicker}
-      <SignHash expiryDate signData/>
+      <SignHash hashOutput={this.props.hashOutput} signerInfo={this.props.signerInfo} expiryDate={this.state.unixDate}/>
       </div>
     );
   }
 }
-
-//Hash file output

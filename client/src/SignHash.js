@@ -1,6 +1,9 @@
 import React from "react";
+import SignTheDoc from "./contracts/SignTheDoc.json";
 import getSignData  from './utils/getSignData';
 import getWeb3 from "./utils/getWeb3";
+
+import cl from './utils/cl';
 
 class SignHash extends React.Component {
     constructor(props) {
@@ -8,8 +11,10 @@ class SignHash extends React.Component {
       this.state = {
         web3: null,
         account: null,
-        singerList: null,
+        contract:null,
+        signerList: null,
         hashOutput: null,
+        expiryDate:null,
         signData: {
           r: null,
           s: null,
@@ -28,8 +33,18 @@ class SignHash extends React.Component {
       try {
         // Get network provider and web3 instance.
         const web3 = await getWeb3();
+        cl('web3:', web3.version);
+        const networkId = await web3.eth.net.getId();
+        cl('networkId', networkId);
+        const deployedNetwork = SignTheDoc.networks[networkId];
+        cl('deploymentNetwork', deployedNetwork);
+        const instance = new web3.eth.Contract(
+          SignTheDoc.abi,
+          deployedNetwork && deployedNetwork.address,
+        );
         this.setState({
-          web3
+          web3:web3,
+          contract:instance
         });
       } catch (error) {
         // Catch any errors for any of the above operations.
@@ -57,6 +72,7 @@ class SignHash extends React.Component {
 
       if (web3) {
         account = await web3.eth.getCoinbase();
+        console.log('account', account)
         if (!account) {
           error = {
             msg: `Web3 account is undefined. Install/Login to MetaMask.`,
@@ -65,6 +81,7 @@ class SignHash extends React.Component {
         }
 
         hashOutput = this.props.hashOutput;
+        console.log('hashOuput', hashOutput)
         if (!hashOutput && !error.hasError) {
           error = {
             msg: `File Hash is undefined. Proceed to Step1 and choose the appropriate file to get the Hash.`,
@@ -79,27 +96,62 @@ class SignHash extends React.Component {
               console.log(e)
             }
 
-            const signerData = this.props.signerData;
-            if(signerData) {
-              signerList = this.makeSignerList(signerData);
+            const signerInfo = this.props.signerInfo;
+            console.log('signerInfo', signerInfo);
+            if(signerInfo) {
+              signerList = this.makeSignerList(signerInfo);
             }
-            this.setState({ signerList, signData, error });
+
+            const expiryDate = this.props.expiryDate;
+            console.log('expiryDate', expiryDate)
+            this.setState({ hashOutput, signerList, signData, error, expiryDate },
+            () => this.deploy());
         }
       }
     }
 
-    makeSignerList(signerData) {
+    makeSignerList(signerInfo) {
       let signerList = [];
-      for (let i = 0; i < signerData.length; i++) {
-        if (!signerData[i].error) {
-          signerList.push(signerData[i].address);
+      for (let i = 0; i < signerInfo.length; i++) {
+        if (!signerInfo[i].error && signerInfo[i].address.length > 0) {
+          signerList.push(signerInfo[i].address);
         };
       }
       return signerList;
     }
 
-    deploy() {
+    //receive hashOutput
+    //receive singerList, if received none let anyone sign the document.
+    //receive expdate, if received none document will not close for signing.
+    //sign the hashoutput
+    //deploy above information into the blockchain.
 
+    //check all the data is ready.
+    async deploy() {
+      console.log('inside deply');
+      const state = this.state;
+      const contract = state.contract;
+      const account = state.account;
+      const signData = state.signData;
+      const expiryDate = state.expiryDate;
+      const signerList = state.signerList;
+      const hashOutput = state.hashOutput;
+      cl('account', account);
+      console.log('expiryDate', expiryDate);
+      console.log('hashOutput', hashOutput);
+      console.log('signerList', signerList);
+      console.log('signedData', signData);
+      cl('contract', contract);
+      //await contract.methods.set(5).send({ from: accounts[0] });
+      await contract.methods.createDocToSign(
+        expiryDate,
+        signData.signature,
+        signerList,
+        signData.docHash,
+        signData.r,
+        signData.s,
+        signData.v
+      ).send({ from: account});
     }
 
     handleSubmit = (e) => {
@@ -107,6 +159,7 @@ class SignHash extends React.Component {
     }
 
   render() {
+    //cl('signerInfoProps', this.props.signerInfo);
     return (
     <div>
       <section>

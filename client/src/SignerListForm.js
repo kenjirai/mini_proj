@@ -1,7 +1,8 @@
 import React from "react";
-import SignHash from './SignHash';
 import ExpiryDate from './ExpiryDate';
 import CheckBox from './CheckBox';
+
+import validateForm from './utils/validateForm';
 
 class signerListForm extends React.Component {
   state = {
@@ -26,7 +27,7 @@ handleChange = (e) => {
   const className = e.target.className;
   const error = 'error';
   const address = e.target.value;
-  const validate = this.validateForm(address, signerInfo);
+  const validate = validateForm(address, signerInfo);
   signerInfo[targetId][className] = address.trim();
   signerInfo[targetId][error] = validate.errorMsg;
 
@@ -34,50 +35,6 @@ handleChange = (e) => {
     signerInfo:signerInfo,
     anyError:validate.anyError
     });
-}
-
-validateForm(value, state) {
-  //remove any first and last space
-  const signerAddress= value.trim();
-  const prefix = signerAddress.slice(0,2);
-  if( prefix !== "0x") {
-    return {
-      errorMsg:'address must start with 0x prefix.',
-      anyError: true
-    };
-  } else if(hasSpace(signerAddress)) {
-    return {
-      errorMsg:'address should not contain any space character.',
-      anyError:true
-    };
-  } else if(value.length !== 42) {
-    return {
-      errorMsg:'address length should be 42 including 0x prefix at the front.',
-      anyError:true
-    };
-  } else if(!isAddressValid(signerAddress)) {
-    return {
-      errorMsg:'address should be in correct hex format.',
-      anyError:true
-    };
-  } else if(state.length > 1) {
-      if(!isAddressUnique(state, signerAddress)) {
-        return {
-          errorMsg:`duplicate address ${signerAddress} already exist.`,
-          anyError:true
-        };
-      } else {
-        return {
-          errorMsg:'',
-          anyError:false
-        };
-      }
-  } else {
-    return {
-      errorMsg:'',
-      anyError:false
-    };
-  }
 }
 
 addAddress = (e) => {
@@ -230,7 +187,7 @@ render() {
         <CheckBox first={firstCheckBox} second={secondCheckBox} checkBoxCallback={this.handleCallback}/>
         {addNewBtn}
       </section>
-      <ExpiryDate/>
+      <ExpiryDate hashOutput={this.props.hashOutput} signerInfo ={this.state.signerInfo}/>
       </div>
     );
   }
