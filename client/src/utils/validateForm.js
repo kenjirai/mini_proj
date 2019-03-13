@@ -57,13 +57,13 @@ function validateForm(value, state) {
         };
       } else {
         return {
-          errorMsg:'',
+          errorMsg:false,
           anyError:false
         };
       }
   } else {
     return {
-      errorMsg:'',
+      errorMsg:false,
       anyError:false
     };
   }

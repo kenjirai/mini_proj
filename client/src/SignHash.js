@@ -5,28 +5,30 @@ import getWeb3 from "./utils/getWeb3";
 
 import cl from './utils/cl';
 
+const initialState = {
+  web3: null,
+  account: null,
+  contract:null,
+  signerList: null,
+  hashOutput: null,
+  expiryDate:null,
+  signData: {
+    r: null,
+    s: null,
+    v: null,
+    docHash: null,
+    signature: null
+  },
+  error: {
+    msg: null,
+    hasError: false
+  }
+};
+
 class SignHash extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {
-        web3: null,
-        account: null,
-        contract:null,
-        signerList: null,
-        hashOutput: null,
-        expiryDate:null,
-        signData: {
-          r: null,
-          s: null,
-          v: null,
-          docHash: null,
-          signature: null
-        },
-        error: {
-          msg: null,
-          hasError: false
-        }
-      };
+      this.state = initialState;
     }
 
     componentDidMount = async () => {

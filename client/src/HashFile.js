@@ -30,9 +30,7 @@ class HashFile extends React.Component {
           current = current.update(event.target.result);
           asyncUpdate();
         } catch (e) {
-          self.setState({
-            error: e
-          });
+          console.log('error', e)
         }
       };
 
@@ -42,10 +40,12 @@ class HashFile extends React.Component {
             error:`file size needs to be greater than 0 byte`
           });
         } else if (start < total && total > 0) {
+          /*
           hashMsg = `hashing...${(start / total * 100).toFixed(2)} %`;
           self.setState({
             hashOutput: hashMsg
           });
+          */
           end = Math.min(start + batch, total);
           reader.readAsArrayBuffer(file.slice(start, end));
           start = end;
