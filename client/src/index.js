@@ -2,8 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import HashFile from './HashFile';
 //import ExpiryDate from './ExpiryDate';
-////import CheckBox from './CheckBox';
+//import CheckBox from './CheckBox';
 //import App from './App';
+import Play from './Play';
+
 import * as serviceWorker from './serviceWorker';
 //<CheckBox first="first" second="second"/>
 ReactDOM.render(

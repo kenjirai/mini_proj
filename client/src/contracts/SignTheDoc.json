@@ -13035,10 +13035,16 @@
       "links": {},
       "address": "0x419efB2A53A415ea7EeFf2A15b505D7aED065C97",
       "transactionHash": "0xf93ebcb7bfcfa7fe6316cbb400bc3c7a310a95e8e0ab4fa35051ba80295835cc"
+    },
+    "1552449525839": {
+      "events": {},
+      "links": {},
+      "address": "0xEBA2cEf3320c34E7873AfA6905e17aDd8011910f",
+      "transactionHash": "0x18a50cb6f0f0722ba805d14e549cebdbc489a1c688c1204c987dc60f9a5f5391"
     }
   },
   "schemaVersion": "3.0.1",
-  "updatedAt": "2019-03-12T10:19:22.590Z",
+  "updatedAt": "2019-03-13T04:02:36.674Z",
   "devdoc": {
     "methods": {}
   },

@@ -97,17 +97,13 @@ class SignHash extends React.Component {
             } catch(e) {
               console.log(e)
             }
-
+            
             const signerInfo = this.props.signerInfo;
-            console.log('signerInfo', signerInfo);
             if(signerInfo) {
               signerList = this.makeSignerList(signerInfo);
             }
-
             const expiryDate = this.props.expiryDate;
-            console.log('expiryDate', expiryDate)
-            this.setState({ hashOutput, signerList, signData, error, expiryDate, account },
-            () => this.deploy());
+            this.setState({ hashOutput, signerList, signData, error, expiryDate, account });
         }
       }
     }
@@ -128,38 +124,6 @@ class SignHash extends React.Component {
     //sign the hashoutput
     //deploy above information into the blockchain.
 
-    //check all the data is ready.
-    async deploy() {
-      console.log('inside deply');
-      const state = this.state;
-      const contract = state.contract;
-      const account = state.account;
-      const signData = state.signData;
-      const expiryDate = state.expiryDate;
-      const signerList = state.signerList;
-      const hashOutput = state.hashOutput;
-      cl('account', account);
-      console.log('expiryDate', expiryDate);
-      console.log('hashOutput', hashOutput);
-      console.log('signerList', signerList);
-      console.log('signedData', signData);
-      cl('contract', contract);
-      //await contract.methods.set(5).send({ from: accounts[0] });
-      await contract.methods.createDocToSign(
-        expiryDate,
-        signData.signature,
-        signerList,
-        signData.docHash,
-        signData.r,
-        signData.s,
-        signData.v
-      ).send({ from: account});
-
-      const response = await contract.methods.getDocData(hashOutput).call();
-      cl('response', response);
-
-    }
-
     handleSubmit = (e) => {
       e.preventDefault();
     }
@@ -169,7 +133,7 @@ class SignHash extends React.Component {
     return (
     <div>
       <section>
-      <h2>Sign the deploy the document</h2>
+      <h2>Step4: Sign the document</h2>
       {this.state.error.hasError ? this.state.error.msg : null}
       <button id='sign-hash' onClick={this.handleClick}> Sign </button>
       <p> signature: {this.state.signature} </p>

@@ -24,8 +24,8 @@ const initialState = {
 class signerListForm extends React.Component {
   state = initialState;
 
-componentDidUpdate(previousProps, previousState) {
-    if (previousProps.hashOutput !== this.props.hashOutput) {
+componentDidUpdate(prevProps, prevState) {
+    if(prevProps.hashOutput !== this.props.hashOutput) {
         this.setState(initialState);
     }
 }
@@ -124,9 +124,11 @@ userConsent = () => {
 handleCallback = (data) => {
     let checkBox = {...this.state.checkBox };
     checkBox.callbackData = data;
+
     this.setState({
       checkBox:checkBox
     }, () => this.checkBoxLogic());
+
   }
 
   checkBoxLogic = () => {
@@ -164,7 +166,6 @@ render() {
     const {signerInfo, anyError, displayAddBtn, checkBox} = this.state;
     const firstCheckBox = checkBox.name.first;
     const secondCheckBox = checkBox.name.second;
-
     let secondStatus;
     let firstStatus;
 
@@ -178,12 +179,14 @@ render() {
       addNewBtn = null;
     }
 
+    let chkBxData = checkBox.callbackData;
+
     return (
       <div>
       <section>
         <h2>Step2: Who can sign the document?</h2>
         <div id="check-box-comp">
-          {this.props.hashOutput? <CheckBox first={firstCheckBox} second={secondCheckBox} checkBoxCallback={this.handleCallback}/>:notComMsg}
+          {this.props.hashOutput? <CheckBox first={firstCheckBox} second={secondCheckBox} checkBoxCallback={this.handleCallback} resetState={this.props.hashOutput}/>:notComMsg}
         </div>
         <br/>
         <form onSubmit={this.handleSubmit}>
@@ -217,7 +220,7 @@ render() {
             {addNewBtn}
         </div>
       </section>
-      <ExpiryDate hashOutput={this.props.hashOutput} signerInfo ={signerInfo} signerCheckBox= {checkBox.callbackData} openSig={this.state.openSig}/>
+      <ExpiryDate hashOutput={this.props.hashOutput} signerInfo ={signerInfo} signerChkBx= {chkBxData} openSig={this.state.openSig}/>
       </div>
     );
   }

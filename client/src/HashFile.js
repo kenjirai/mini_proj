@@ -14,7 +14,6 @@ class HashFile extends React.Component {
     }
 
     handleChange = (event) => {
-      this.setState(initialState)
       let reader = new FileReader();
       const file = event.target.files[0];
       const batch = 1024 * 1024 * 2;

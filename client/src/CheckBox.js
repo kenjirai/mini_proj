@@ -23,12 +23,14 @@ function setRestFalse(obj, setKey) {
   return obj;
 }
 
+const initialState = {
+  checkBox:{}
+}
+
 class CheckBox extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {
-        checkBox: {}
-      };
+      this.state = initialState;
       this.handleInputChange = this.handleInputChange.bind(this);
     }
 
@@ -65,11 +67,27 @@ class CheckBox extends React.Component {
     }
 
   componentDidUpdate(prevProps, prevState) {
+    if(JSON.stringify(prevProps.resetState) !== JSON.stringify(this.props.resetState)) {
+      console.log('inside componentDidUpdate')
+      console.log('prevProps:', prevProps.resetState)
+      console.log('resetState:', this.props.resetState)
+      this.setState({
+        checkBox:null},
+        () => console.log('hello from component did mount'));
+    }
+
     if(JSON.stringify(prevState.checkBox) !== JSON.stringify(this.state.checkBox)) {
       this.props.checkBoxCallback(this.state.checkBox)
     }
   }
+
+  sendDataToParent= () => {
+    console.log('sendDataToParent');
+    this.props.checkBoxCallback(this.state.checkBox);
+  }
+
   render() {
+    //console.log(' Real checkBox state', this.state)
     const first =  this.props.first.toLowerCase();
     const second = this.props.second.toLowerCase();
     return (

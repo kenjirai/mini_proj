@@ -13,7 +13,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 function hasKey(obj, key) {
     if (obj.hasOwnProperty(key))
-      cl('yesHasKey', key)
       return true;
   return false;
 }
@@ -21,20 +20,18 @@ function hasKey(obj, key) {
 const initialState = {
     startDate: new Date(),
     unixDate:null,
-    checkBox:null
+    checkBox: {
+      name: {
+        first: 'yes',
+        second: 'no'
+      },
+      callbackData:null
+    },
+    includeDate:null
   };
 
 export default class ExpiryDate extends React.Component {
-    state = initialState;
-
-
-  componentDidUpdate(prevProps) {
-    if(prevProps.signerCheckBox) {
-      if(JSON.stringify(prevProps.signerCheckBox) !== JSON.stringify(this.props.signerCheckBox)) {
-        this.setState(initialState);
-      }
-    }
-  }
+  state = initialState;
 
   handleChange = (date) => {
     const unixDate = Math.floor(date/ 1000);
@@ -45,18 +42,18 @@ export default class ExpiryDate extends React.Component {
   }
 
   handleCallback = (data) => {
-    this.setState({
-      checkBox: data
-    })
+    let state = {...this.state};
+    state.checkBox.callbackData = data;
+    this.setState(state);
   }
+
   render() {
-
-    const first = 'yes';
-    const second = 'no';
-
+    const data = this.props.signerChkBx;
     let datePicker;
     let checkBox = this.state.checkBox;
-    let notComMsg = "Complete step:2 to view this content"
+    let notComMsg = "Complete step:2 to view this content";
+
+    console.log('callback CheckBox data', checkBox.callbackData);
 
     const signerInfo = this.props.signerInfo;
 
@@ -71,7 +68,32 @@ export default class ExpiryDate extends React.Component {
       hasData = false;
     }
 
-    if(checkBox && checkBox[first]) {
+    //Get checkBox first label which is set to sring type 'yes';
+    const firstLabel = checkBox.name.first;
+
+    //Get checkBox first label which is set to sring type 'no';
+    const secondLabel = checkBox.name.second;
+
+    const chkBxData = checkBox.callbackData;
+
+    let firstValue; let secondValue;
+
+    if(chkBxData) {
+      if(hasKey(chkBxData, firstLabel)) {
+        firstValue = chkBxData[firstLabel];
+      }
+
+      if(hasKey(chkBxData, secondLabel)) {
+        secondValue = chkBxData[secondLabel];
+      }
+    }
+
+    //cl('firstValue', firstValue);
+    //cl('secondValue', secondValue);
+    //cl('signerList props from exp', this.props.signerChkBx);
+    //cl('expiryDate checkBox:', this.state.checkBox.callbackData);
+
+    if(firstValue) {
       datePicker = <DatePicker
       selected={this.state.startDate}
       onChange={this.handleChange}
@@ -85,15 +107,14 @@ export default class ExpiryDate extends React.Component {
     } else {
       datePicker = null;
     }
-
     return (
       <div>
       <section>
       <h2> Step3: Expiry Date </h2>
-        {hasData? <CheckBox first={first} second={second} checkBoxCallback={this.handleCallback}/> : notComMsg }
+        {hasData? <CheckBox first={firstLabel} second={secondLabel} checkBoxCallback={this.handleCallback} resetState={this.props.signerChkBx}/> : notComMsg }
       </section>
       {datePicker}
-      <SignHash hashOutput={this.props.hashOutput} signerInfo={signerInfo} expiryDate={this.state.unixDate}/>
+      <SignHash hashOutput={this.props.hashOutput} signerInfo={signerInfo} expiryDate={this.state.unixDate} includeDate={this.state.includeDate}/>
       </div>
     );
   }
